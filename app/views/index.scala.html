@@ -1,0 +1,33 @@
+@(connectedUser: models.User)
+<!DOCTYPE html>
+
+<html ng-app="myApp">
+<head>
+    <title>Jumpstart</title>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")"/>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    <script src="@routes.Assets.at("javascripts/lib/jquery-1.10.2.min.js")" type="text/javascript"></script>
+
+    <script src="@routes.Assets.at("javascripts/lib/angular/angular-1.0.8.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/lib/angular/angular-resource-1.0.8.min.js")" type="text/javascript"></script>
+
+    <script src="@routes.Assets.at("javascripts/app/app.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/app/controllers.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/app/directives.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/app/filters.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/app/services.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var Conf = window.Conf ||
+            { userInfo:
+                {
+                    @if(connectedUser != null){id: @connectedUser.id}
+                }
+            };
+    </script>
+</head>
+<body>
+<div class="container" ng-view>
+</body>
+</html>

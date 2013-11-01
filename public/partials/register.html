@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row">
+        <div class="span4 offset4">
+
+
+            <h1 class="text-uppercase">Register</h1>
+
+            <ul ng-show="errors" class="unstyled alert alert-error">
+                <li ng-repeat="error in errors">{{error}}</li>
+            </ul>
+
+            <p ng-show="global.connectedUser.authenticated">You're already logged in as user id #: {{global.connectedUser.id}}</p>
+
+            <div ng-hide="global.connectedUser.authenticated">
+                <form name="loginForm">
+                    <input placeholder="Email" type="text" ng-model="user.username" class="input-block-level" id="loginEmail">
+                    <input placeholder="Password" type="password" ng-model="user.password" class="input-block-level" id="loginPassword">
+                    <input placeholder="Confirm Password" type="password" ng-model="user.confirmPassword" class="input-block-level" id="registerConfirmPassword">
+
+                    <button ng-click="register(user)" class="btn btn-primary input-block-level" id="loginFormSubmitBtn">Submit</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
