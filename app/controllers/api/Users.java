@@ -8,6 +8,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import utils.SecurityUtil;
 
+import java.util.Date;
 import java.util.List;
 
 import static play.data.Form.form;
@@ -22,14 +23,15 @@ public class Users extends ApiBaseController {
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result create(){
+
         Form<User> userForm = form(User.class);
         userForm = userForm.bind(request().body().asJson());
-
 
         if(userForm.hasErrors()){
             return errorResult(userForm.errors());
         } else {
             User user = userForm.get();
+            user.created = new Date();
             user.save();
             SecurityUtil.createAuthenticatedSession(user);
             return successfulSaveResult(user);
@@ -54,8 +56,7 @@ public class Users extends ApiBaseController {
         userForm = userForm.bind(request().body().asJson());
 
         User updatedUser  = userForm.get();
-
-        updatedUser.id = id;
+        updatedUser.setId(id);
 
         User existingUser = User.find.byId(id);
         if (existingUser == null) {
@@ -63,6 +64,7 @@ public class Users extends ApiBaseController {
         }
 
         updatedUser.created = existingUser.created;
+        updatedUser.updated = new Date();
         updatedUser.update();
 
         return ok(Json.toJson(updatedUser));
@@ -72,6 +74,10 @@ public class Users extends ApiBaseController {
     public static Result delete(Long id) {
 
         User user = User.find.byId(id);
+
+        // probably could just use this but won't return a result
+        // User.find.ref(id).delete();
+
         if (user == null) {
             return notFound("User not found");
         }
