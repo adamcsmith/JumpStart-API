@@ -1,6 +1,5 @@
 package controllers.api;
 
-
 import models.User;
 import play.data.Form;
 import play.libs.Json;
@@ -9,7 +8,6 @@ import play.mvc.Result;
 import utils.SecurityUtil;
 
 import java.util.Date;
-import java.util.List;
 
 import static play.data.Form.form;
 
@@ -33,6 +31,7 @@ public class Users extends ApiBaseController {
             User user = userForm.get();
             user.created = new Date();
             user.save();
+            // TODO: strip out session logic
             SecurityUtil.createAuthenticatedSession(user);
             return successfulSaveResult(user);
         }
@@ -41,8 +40,9 @@ public class Users extends ApiBaseController {
     public static Result get(Long id){
 
         User user = User.find.byId(id);
+
         if (user == null) {
-            return notFound("User not found");
+            return notFound("User with id " + id + "not found");
         } else {
             return ok(Json.toJson(user));
         }
@@ -60,7 +60,7 @@ public class Users extends ApiBaseController {
 
         User existingUser = User.find.byId(id);
         if (existingUser == null) {
-            return notFound("User not found");
+            return notFound("User with id " + id + "not found");
         }
 
         updatedUser.created = existingUser.created;
@@ -76,14 +76,14 @@ public class Users extends ApiBaseController {
         User user = User.find.byId(id);
 
         // probably could just use this but won't return a result
-        // User.find.ref(id).delete();
+        // User.find.byId(id).delete();
 
         if (user == null) {
-            return notFound("User not found");
+            return notFound("User not found for id " + id);
         }
 
         user.delete();
-        return ok();
+        return ok("User with id " + id + " successfully deleted!");
     }
 
 }
