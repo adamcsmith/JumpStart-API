@@ -19,6 +19,13 @@ import static play.data.Form.form;
  */
 public class Users extends ApiBaseController {
 
+    /**
+     * The below CRUD operations currently work for the in memory database as well
+     * as a MySQL database.  Currently working on testing with mongodb.  Think mongo
+     * will force us to abstract these out more.
+     */
+
+
     @BodyParser.Of(BodyParser.Json.class)
     public static Result create(){
 
