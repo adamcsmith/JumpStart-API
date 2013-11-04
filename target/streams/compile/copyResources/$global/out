@@ -1,0 +1,7 @@
+[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	(/Users/adamcsmith/Projects/JumpStart/JumpStart-API/conf/application.conf,/Users/adamcsmith/Projects/JumpStart/JumpStart-API/target/scala-2.10/classes/application.conf)[0m
+[0m[[0mdebug[0m] [0m	(/Users/adamcsmith/Projects/JumpStart/JumpStart-API/conf/evolutions,/Users/adamcsmith/Projects/JumpStart/JumpStart-API/target/scala-2.10/classes/evolutions)[0m
+[0m[[0mdebug[0m] [0m	(/Users/adamcsmith/Projects/JumpStart/JumpStart-API/conf/messages,/Users/adamcsmith/Projects/JumpStart/JumpStart-API/target/scala-2.10/classes/messages)[0m
+[0m[[0mdebug[0m] [0m	(/Users/adamcsmith/Projects/JumpStart/JumpStart-API/conf/routes,/Users/adamcsmith/Projects/JumpStart/JumpStart-API/target/scala-2.10/classes/routes)[0m
+[0m[[0mdebug[0m] [0m	(/Users/adamcsmith/Projects/JumpStart/JumpStart-API/conf/evolutions/default,/Users/adamcsmith/Projects/JumpStart/JumpStart-API/target/scala-2.10/classes/evolutions/default)[0m
+[0m[[0mdebug[0m] [0m	(/Users/adamcsmith/Projects/JumpStart/JumpStart-API/conf/evolutions/default/1.sql,/Users/adamcsmith/Projects/JumpStart/JumpStart-API/target/scala-2.10/classes/evolutions/default/1.sql)[0m
