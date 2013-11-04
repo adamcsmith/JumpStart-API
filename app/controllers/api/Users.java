@@ -33,13 +33,14 @@ public class Users extends ApiBaseController {
             user.save();
             // TODO: strip out session logic
             SecurityUtil.createAuthenticatedSession(user);
-            return successfulSaveResult(user);
+            return ok(Json.toJson(user));
         }
     }
 
-    public static Result get(Long id){
 
-        User user = User.find.byId(id);
+    public static Result retrieve(Long id){
+
+        User user = User.findByID(id);
 
         if (user == null) {
             return notFound("User with id " + id + "not found");
@@ -58,7 +59,7 @@ public class Users extends ApiBaseController {
         User updatedUser  = userForm.get();
         updatedUser.setId(id);
 
-        User existingUser = User.find.byId(id);
+        User existingUser = User.findByID(id);
         if (existingUser == null) {
             return notFound("User with id " + id + "not found");
         }
@@ -73,10 +74,7 @@ public class Users extends ApiBaseController {
 
     public static Result delete(Long id) {
 
-        User user = User.find.byId(id);
-
-        // probably could just use this but won't return a result
-        // User.find.byId(id).delete();
+        User user = User.findByID(id);
 
         if (user == null) {
             return notFound("User not found for id " + id);

@@ -70,4 +70,10 @@ public abstract class ModelBase extends Model {
         return updated;
     }
 
+    public static User findByID(Long id) {
+
+        User user = User.find.byId(id);
+        return user;
+    }
+
 }

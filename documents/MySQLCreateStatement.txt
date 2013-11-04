@@ -1,3 +1,7 @@
+CREATE DATABASE jumpstart;
+
+USE jumpstart;
+
 CREATE TABLE `app_user` (
   `ID` bigint(19) unsigned NOT NULL AUTO_INCREMENT,
   `CREATED` timestamp NULL DEFAULT NULL,
