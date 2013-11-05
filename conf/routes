@@ -13,6 +13,7 @@ POST          /api/users            controllers.api.Users.create()
 GET           /api/users/:id        controllers.api.Users.retrieve(id: Long)
 PUT           /api/users/:id        controllers.api.Users.update(id: Long)
 DELETE        /api/users/:id        controllers.api.Users.delete(id: Long)
+GET           /api/users            controllers.api.Users.findAllUsers()
 
 POST          /api/sessions         controllers.api.Sessions.create()
 DELETE        /api/sessions         controllers.api.Sessions.delete()

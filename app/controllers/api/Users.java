@@ -8,6 +8,7 @@ import play.mvc.Result;
 import utils.SecurityUtil;
 
 import java.util.Date;
+import java.util.List;
 
 import static play.data.Form.form;
 
@@ -89,6 +90,13 @@ public class Users extends ApiBaseController {
 
         user.delete();
         return ok("User with id " + id + " successfully deleted!");
+    }
+
+    // method is strictly for testing purposes
+    public static Result findAllUsers() {
+
+        List<User> userList = User.find.all();
+        return ok(Json.toJson(userList));
     }
 
 }
