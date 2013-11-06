@@ -10,9 +10,9 @@ GET           /register             controllers.Application.index()
 
 # API
 POST          /api/users            controllers.api.Users.create()
-GET           /api/users/:id        controllers.api.Users.retrieve(id: Long)
-PUT           /api/users/:id        controllers.api.Users.update(id: Long)
-DELETE        /api/users/:id        controllers.api.Users.delete(id: Long)
+GET           /api/users/:id        controllers.api.Users.retrieve(id: String)
+PUT           /api/users/:id        controllers.api.Users.update(id: String)
+DELETE        /api/users/:id        controllers.api.Users.delete(id: String)
 GET           /api/users            controllers.api.Users.findAllUsers()
 
 POST          /api/sessions         controllers.api.Sessions.create()
