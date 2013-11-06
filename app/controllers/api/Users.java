@@ -5,9 +5,7 @@ import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
-import utils.SecurityUtil;
 
-import java.util.Date;
 import java.util.List;
 
 import static play.data.Form.form;
@@ -37,18 +35,15 @@ public class Users extends ApiBaseController {
             return errorResult(userForm.errors());
         } else {
             User user = userForm.get();
-            user.created = new Date();
-            user.save();
-            // TODO: strip out session logic
-            SecurityUtil.createAuthenticatedSession(user);
+            user = User.createUser(user);
             return ok(Json.toJson(user));
         }
     }
 
 
-    public static Result retrieve(Long id){
+    public static Result retrieve(String id){
 
-        User user = User.findByID(id);
+        User user = User.retrieveUser(id);
 
         if (user == null) {
             return notFound("User with id " + id + "not found");
@@ -57,38 +52,37 @@ public class Users extends ApiBaseController {
         }
     }
 
+//    public static Result retrieve(String id){
+//
+//        User user = null;
+//
+//        try {
+//            user = User.retrieveUser(id);
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
+//
+//        return ok(Json.toJson(user));
+//    }
+
 
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result update(Long id) {
+    public static Result update(String id) {
 
         Form<User> userForm = form(User.class);
         userForm = userForm.bind(request().body().asJson());
 
         User updatedUser  = userForm.get();
-        updatedUser.setId(id);
-
-        User existingUser = User.findByID(id);
-        if (existingUser == null) {
-            return notFound("User with id " + id + "not found");
-        }
-
-        updatedUser.created = existingUser.created;
-        updatedUser.updated = new Date();
-        updatedUser.update();
+        updatedUser = User.updateUser(updatedUser, id);
 
         return ok(Json.toJson(updatedUser));
     }
 
 
-    public static Result delete(Long id) {
+    public static Result delete(String id) {
 
-        User user = User.findByID(id);
+        User.deleteUser(id);
 
-        if (user == null) {
-            return notFound("User not found for id " + id);
-        }
-
-        user.delete();
         return ok("User with id " + id + " successfully deleted!");
     }
 

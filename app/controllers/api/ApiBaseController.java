@@ -1,6 +1,6 @@
 package controllers.api;
 
-import models.ModelBase;
+import models.MySQLModel;
 import play.data.validation.ValidationError;
 import play.i18n.Messages;
 import play.libs.Json;
@@ -52,7 +52,7 @@ public class ApiBaseController extends Controller {
         return ok(Json.toJson(result));
     }
 
-    protected static Result successfulSaveResult(ModelBase model){
+    protected static Result successfulSaveResult(MySQLModel model){
         Map <String, Object> result = new HashMap<String, Object>();
         Map <String, Object> innerData = new HashMap<String, Object>();
         innerData.put("id", model.id);

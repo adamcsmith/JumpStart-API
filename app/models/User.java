@@ -24,7 +24,7 @@ import static play.data.validation.Constraints.Required;
  */
 @Entity
 @Table(name = "APP_USER")
-public class User extends ModelBase {
+public class User extends MySQLModel {
 
     /***********************************************************************
      * Enums and Static fields                                             *
