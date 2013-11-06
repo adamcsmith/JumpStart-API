@@ -35,21 +35,16 @@ public class Users extends ApiBaseController {
             return errorResult(userForm.errors());
         } else {
             User user = userForm.get();
-            user = User.createUser(user);
-            return ok(Json.toJson(user));
+            Result result = User.createUser(user);
+            return result;
         }
     }
 
 
     public static Result retrieve(String id){
 
-        User user = User.retrieveUser(id);
-
-        if (user == null) {
-            return notFound("User with id " + id + "not found");
-        } else {
-            return ok(Json.toJson(user));
-        }
+        Result result = User.retrieveUser(id);
+        return result;
     }
 
 //    public static Result retrieve(String id){
@@ -73,17 +68,16 @@ public class Users extends ApiBaseController {
         userForm = userForm.bind(request().body().asJson());
 
         User updatedUser  = userForm.get();
-        updatedUser = User.updateUser(updatedUser, id);
+        Result result = User.updateUser(updatedUser, id);
 
-        return ok(Json.toJson(updatedUser));
+        return result;
     }
 
 
     public static Result delete(String id) {
 
-        User.deleteUser(id);
-
-        return ok("User with id " + id + " successfully deleted!");
+        Result result = User.deleteUser(id);
+        return result;
     }
 
     // method is strictly for testing purposes

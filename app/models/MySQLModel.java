@@ -1,6 +1,8 @@
 package models;
 
 import play.db.ebean.Model;
+import play.libs.Json;
+import play.mvc.Result;
 import utils.SecurityUtil;
 
 import javax.persistence.Id;
@@ -8,6 +10,9 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+
+import static controllers.api.ApiBaseController.notFound;
+import static play.mvc.Results.ok;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,52 +36,52 @@ public abstract class MySQLModel extends Model {
     // TODO: consider returning Results instead of User objects
     // TODO: when these crud operations are vetted, delete ModelBase.java class
 
-    public static User createUser(User user) {
+    public static Result createUser(User user) {
 
         user.created = new Date();
         user.save();
         // TODO: strip out session logic
         SecurityUtil.createAuthenticatedSession(user);
 
-        return user;
+        return ok(Json.toJson(user));
     }
 
-    public static User retrieveUser(String id) {
+    public static Result retrieveUser(String id) {
 
         User user = User.find.byId(Long.parseLong(id));
 
-//        if (user == null) {
-//            throw new RuntimeException("Attempting to retrieve user but user not found");
-//        }
-
-        return user;
+        if (user == null) {
+            return notFound("User with id " + id + "not found");
+        } else {
+            return ok(Json.toJson(user));
+        }
     }
 
-    public static User updateUser(User updatedUser, String existingUserID) {
+    public static Result updateUser(User updatedUser, String existingUserID) {
 
         updatedUser.id = existingUserID;
 
-        User existingUser = User.retrieveUser(existingUserID);
+        User existingUser = User.find.byId(Long.parseLong(existingUserID));
         if (existingUser == null) {
-            throw new RuntimeException("User with id " + existingUserID + "not found. Update failed.");
+           return notFound("User with id " + existingUserID + "not found. Update failed.");
         }
 
         updatedUser.created = existingUser.created;
         updatedUser.updated = new Date();
         updatedUser.update();
 
-        return updatedUser;
+        return ok(Json.toJson(updatedUser));
     }
 
-    public static void deleteUser(String id) {
+    public static Result deleteUser(String id) {
 
-        User user = retrieveUser(id);
+        User user = User.find.byId(Long.parseLong(id));
 
         if (user == null) {
-            throw new RuntimeException("User delete failed.  User not found");
-//            return notFound("user not found");
+            return notFound("User with id " + id + "not found.  Delete failed.");
         } else {
             user.delete();
+            return ok("Woohoo!  User with id " + id + "successfully deleted!");
         }
     }
 
