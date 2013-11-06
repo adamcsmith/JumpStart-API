@@ -10,7 +10,7 @@ object ApplicationBuild extends Build {
 
     // Add your project dependencies here,
     // "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
-    // "org.mongodb" % "mongo-java-driver" % "2.10.1",
+    "org.mongodb" % "mongo-java-driver" % "2.10.1",
     "mysql" % "mysql-connector-java" % "5.1.18",
     javaCore,
     javaJdbc,
