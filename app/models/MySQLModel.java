@@ -35,7 +35,7 @@ public abstract class MySQLModel extends Model {
      * Inserts new user into db
      *
      * @param user - user to be created
-     * @return
+     * @return - creation result
      */
     public static Result createUser(User user) {
 
@@ -50,7 +50,7 @@ public abstract class MySQLModel extends Model {
      * Retrieves user info from db
      *
      * @param id - id of the user we are searching for
-     * @return
+     * @return - retrieve result
      */
     public static Result retrieveUser(String id) {
 
@@ -69,7 +69,7 @@ public abstract class MySQLModel extends Model {
      *
      * @param updatedUser - user with updated fields
      * @param existingUserID - id of the user we will be updating
-     * @return
+     * @return - update result
      */
     public static Result updateUser(User updatedUser, String existingUserID) {
 
@@ -88,7 +88,7 @@ public abstract class MySQLModel extends Model {
      * Removes user from db
      *
      * @param id - id of the user to be deleted
-     * @return
+     * @return - delete result
      */
     public static Result deleteUser(String id) {
 

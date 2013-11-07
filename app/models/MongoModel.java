@@ -45,7 +45,7 @@ public abstract class MongoModel extends Model {
      * Inserts new user into db
      *
      * @param user - user to be created
-     * @return
+     * @return - creation result
      */
     public static Result createUser(User user) {
 
@@ -73,7 +73,7 @@ public abstract class MongoModel extends Model {
      * Retrieves user info from db
      *
      * @param id - id of the user we are searching for
-     * @return
+     * @return - retrieve result
      */
     public static Result retrieveUser(String id) {
 
@@ -98,7 +98,7 @@ public abstract class MongoModel extends Model {
      *
      * @param updatedUser - user with updated fields
      * @param existingUserID - id of the user we will be updating
-     * @return
+     * @return - update result
      */
     public static Result updateUser(User updatedUser, String existingUserID) {
 
@@ -111,6 +111,8 @@ public abstract class MongoModel extends Model {
         if (userResult == null) {
             return notFound("User not found with id " + existingUserID);
         }
+
+        // TODO: add check to make sure that user did not change username to one that already exists
 
         // maps fields from user object onto db object
         BasicDBObject dbObject = createDBObjectFromUser(updatedUser);
@@ -128,7 +130,7 @@ public abstract class MongoModel extends Model {
      * Removes user from db
      *
      * @param id - id of the user to be deleted
-     * @return
+     * @return - delete result
      */
     public static Result deleteUser(String id) {
 
@@ -146,7 +148,7 @@ public abstract class MongoModel extends Model {
     /**
      * Configure mongo client by setting db name and table name
      *
-     * @return
+     * @return - configured dbcollection
      */
     private static DBCollection configureMongoClient() {
 
@@ -166,7 +168,7 @@ public abstract class MongoModel extends Model {
      * Builds a database object based on the fields the passed in User has
      *
      * @param user - user to map the fields from
-     * @return
+     * @return - populated dbobject
      */
     private static BasicDBObject createDBObjectFromUser(User user) {
 
@@ -188,7 +190,7 @@ public abstract class MongoModel extends Model {
      * populates a User object based on the fields of a DBObject
      *
      * @param dbObject - object with fields we want mapped to a User
-     * @return
+     * @return - populated user object
      */
     private static User populateUser(DBObject dbObject) {
 

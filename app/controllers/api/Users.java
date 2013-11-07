@@ -3,27 +3,23 @@ package controllers.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.User;
-import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 
 import java.util.Date;
-import java.util.List;
 
 /**
- * Created with IntelliJ IDEA for jumpstart
- * User: phutchinson
- * Date: 3/16/13
- * Time: 11:14 PM
+ * Created with IntelliJ IDEA
+ * User: adamcsmith
+ * Date: 10/31/13
  */
 public class Users extends ApiBaseController {
 
     /**
-     * The below CRUD operations currently work for the in-memory database as well
-     * as a MySQL database.  Currently working on testing with mongodb.  Think mongo
-     * will force us to abstract these out more.
+     * Create user
+     *
+     * @return - creation result
      */
-
     @BodyParser.Of(BodyParser.Json.class)
     public static Result create(){
 
@@ -37,12 +33,23 @@ public class Users extends ApiBaseController {
         return User.createUser(user);
     }
 
-
+    /**
+     * Find a user from an id
+     *
+     * @param id - user id
+     * @return - retrieve result
+     */
     public static Result retrieve(String id){
 
         return User.retrieveUser(id);
     }
 
+    /**
+     * Update a user
+     *
+     * @param id - id of user to be updated
+     * @return - updated result
+     */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result update(String id) {
 
@@ -57,17 +64,15 @@ public class Users extends ApiBaseController {
         return User.updateUser(updatedUser, id);
     }
 
-
+    /**
+     * Delete a user based off id
+     *
+     * @param id - user id to be deleted
+     * @return - delete result
+     */
     public static Result delete(String id) {
 
         return User.deleteUser(id);
-    }
-
-    // method is strictly for testing purposes
-    public static Result findAllUsers() {
-
-        List<User> userList = User.find.all();
-        return ok(Json.toJson(userList));
     }
 
 }
