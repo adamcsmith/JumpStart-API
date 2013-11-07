@@ -34,7 +34,6 @@ public abstract class MySQLModel extends Model {
 
     public static Result createUser(User user) {
 
-        user.created = new Date();
         user.save();
         // TODO: strip out session logic
         SecurityUtil.createAuthenticatedSession(user);
@@ -55,15 +54,12 @@ public abstract class MySQLModel extends Model {
 
     public static Result updateUser(User updatedUser, String existingUserID) {
 
-        updatedUser.id = existingUserID;
-
         User existingUser = User.find.byId(Long.parseLong(existingUserID));
         if (existingUser == null) {
            return notFound("User with id " + existingUserID + "not found. Update failed.");
         }
 
         updatedUser.created = existingUser.created;
-        updatedUser.updated = new Date();
         updatedUser.update();
 
         return ok(Json.toJson(updatedUser));

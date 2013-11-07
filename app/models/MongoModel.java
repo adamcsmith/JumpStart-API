@@ -2,6 +2,7 @@ package models;
 
 import com.mongodb.*;
 import org.bson.types.ObjectId;
+import play.Play;
 import play.db.ebean.Model;
 import play.libs.Json;
 import play.mvc.Result;
@@ -25,6 +26,10 @@ import static play.mvc.Results.ok;
 @MappedSuperclass
 public abstract class MongoModel extends Model {
 
+    // pulls data from application.conf and sets local variables
+    private static final String dbName = Play.application().configuration().getString("mongo.dbName");
+    private static final String collectionName = Play.application().configuration().getString("mongo.userCollectionName");
+
     @Id
     public String id;
 
@@ -46,6 +51,8 @@ public abstract class MongoModel extends Model {
 
         // maps fields from user object onto db object
         BasicDBObject dbObject = createDBObjectFromUser(user);
+
+        // TODO: add validation to make sure credentials don't already exist
 
         // save the new user
         collection.save(dbObject);
@@ -138,11 +145,9 @@ public abstract class MongoModel extends Model {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        // TODO: abstract out db name and collection name
+        DB db = mongoClient.getDB(dbName);
 
-        DB db = mongoClient.getDB("mydb");
-
-        return db.getCollection("testData");
+        return db.getCollection(collectionName);
     }
 
     /**
@@ -154,8 +159,15 @@ public abstract class MongoModel extends Model {
     private static BasicDBObject createDBObjectFromUser(User user) {
 
         BasicDBObject dbObject = new BasicDBObject();
+
         dbObject.append("username", user.username);
         dbObject.append("password", user.password);
+        dbObject.append("temporaryPassword", user.temporaryPassword);
+        dbObject.append("temporaryPasswordExpiration", user.temporaryPasswordExpiration);
+        dbObject.append("lastLogin", user.lastLogin);
+        dbObject.append("failedLoginAttempts", user.failedLoginAttempts);
+        dbObject.append("created", user.created);
+        dbObject.append("updated", user.updated);
 
         return dbObject;
     }
@@ -169,9 +181,17 @@ public abstract class MongoModel extends Model {
     private static User populateUser(DBObject dbObject) {
 
         User user = new User();
+
         user.id = dbObject.get("_id").toString();
         user.username = dbObject.get("username").toString();
         user.password = dbObject.get("password").toString();
+        // TODO: only throwing NPE on this one.....why?
+//        user.temporaryPassword = dbObject.get("temporaryPassword").toString();
+        user.temporaryPasswordExpiration = (Date) dbObject.get("temporaryPasswordExpiration");
+        user.lastLogin = (Date) dbObject.get("lastLogin");
+        user.failedLoginAttempts = (Integer) dbObject.get("failedLoginAttempts");
+        user.created = (Date) dbObject.get("created");
+        user.updated = (Date) dbObject.get("updated");
 
         return user;
     }
