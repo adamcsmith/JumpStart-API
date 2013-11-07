@@ -38,9 +38,7 @@ public abstract class MongoModel extends Model {
 
         DBCollection collection = configureMongoClient();
 
-        BasicDBObject dbObject = new BasicDBObject();
-        dbObject.append("username", user.username);
-        dbObject.append("password", user.password);
+        BasicDBObject dbObject = createDBObjectFromUser(user);
 
         collection.save(dbObject);
 
@@ -77,9 +75,7 @@ public abstract class MongoModel extends Model {
             return notFound("User not found with id " + existingUserID);
         }
 
-        BasicDBObject dbObject = new BasicDBObject();
-        dbObject.append("username", updatedUser.username);
-        dbObject.append("password", updatedUser.password);
+        BasicDBObject dbObject = createDBObjectFromUser(updatedUser);
 
         collection.update(userResult, dbObject);
 
@@ -111,6 +107,15 @@ public abstract class MongoModel extends Model {
         DB db = mongoClient.getDB("mydb");
 
         return db.getCollection("testData");
+    }
+
+    private static BasicDBObject createDBObjectFromUser(User user) {
+
+        BasicDBObject dbObject = new BasicDBObject();
+        dbObject.append("username", user.username);
+        dbObject.append("password", user.password);
+
+        return dbObject;
     }
 
     private static User populateUser(DBObject dbObject) {
