@@ -34,17 +34,31 @@ public abstract class MongoModel extends Model {
     @Temporal(TemporalType.DATE)
     public Date updated;
 
+    /**
+     * Inserts new user into db
+     *
+     * @param user - user to be created
+     * @return
+     */
     public static Result createUser(User user) {
 
         DBCollection collection = configureMongoClient();
 
+        // maps fields from user object onto db object
         BasicDBObject dbObject = createDBObjectFromUser(user);
 
+        // save the new user
         collection.save(dbObject);
 
         return ok();
     }
 
+    /**
+     * Retrieves user info from db
+     *
+     * @param id - id of the user we are searching for
+     * @return
+     */
     public static Result retrieveUser(String id) {
 
         DBCollection collection = configureMongoClient();
@@ -63,6 +77,13 @@ public abstract class MongoModel extends Model {
         return ok(Json.toJson(user));
     }
 
+    /**
+     * Updates an existing user in the db
+     *
+     * @param updatedUser - user with updated fields
+     * @param existingUserID - id of the user we will be updating
+     * @return
+     */
     public static Result updateUser(User updatedUser, String existingUserID) {
 
         DBCollection collection = configureMongoClient();
@@ -75,13 +96,21 @@ public abstract class MongoModel extends Model {
             return notFound("User not found with id " + existingUserID);
         }
 
+        // maps fields from user object onto db object
         BasicDBObject dbObject = createDBObjectFromUser(updatedUser);
 
+        // update the user in the db
         collection.update(userResult, dbObject);
 
         return ok();
     }
 
+    /**
+     * Removes user from db
+     *
+     * @param id - id of the user to be deleted
+     * @return
+     */
     public static Result deleteUser(String id) {
 
         DBCollection collection = configureMongoClient();
@@ -95,6 +124,11 @@ public abstract class MongoModel extends Model {
         return ok();
     }
 
+    /**
+     * Configure mongo client by setting db name and table name
+     *
+     * @return
+     */
     private static DBCollection configureMongoClient() {
 
         MongoClient mongoClient = null;
@@ -104,11 +138,19 @@ public abstract class MongoModel extends Model {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
+        // TODO: abstract out db name and collection name
+
         DB db = mongoClient.getDB("mydb");
 
         return db.getCollection("testData");
     }
 
+    /**
+     * Builds a database object based on the fields the passed in User has
+     *
+     * @param user - user to map the fields from
+     * @return
+     */
     private static BasicDBObject createDBObjectFromUser(User user) {
 
         BasicDBObject dbObject = new BasicDBObject();
@@ -118,6 +160,12 @@ public abstract class MongoModel extends Model {
         return dbObject;
     }
 
+    /**
+     * populates a User object based on the fields of a DBObject
+     *
+     * @param dbObject - object with fields we want mapped to a User
+     * @return
+     */
     private static User populateUser(DBObject dbObject) {
 
         User user = new User();
