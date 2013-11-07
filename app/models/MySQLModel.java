@@ -34,7 +34,6 @@ public abstract class MySQLModel extends Model {
 
 
     // TODO: consider returning Results instead of User objects
-    // TODO: when these crud operations are vetted, delete ModelBase.java class
 
     public static Result createUser(User user) {
 
