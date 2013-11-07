@@ -38,11 +38,11 @@ public abstract class MongoModel extends Model {
 
         DBCollection collection = configureMongoClient();
 
-        BasicDBObject test = new BasicDBObject();
-        test.append("username", user.username);
-        test.append("password", user.password);
+        BasicDBObject dbObject = new BasicDBObject();
+        dbObject.append("username", user.username);
+        dbObject.append("password", user.password);
 
-        collection.save(test);
+        collection.save(dbObject);
 
         return ok();
     }
@@ -60,15 +60,29 @@ public abstract class MongoModel extends Model {
         }
 
         // create and populate user object based on db object returned
-        User user = new User();
-        user.id = userResult.get("_id").toString();
-        user.username = userResult.get("username").toString();
-        user.password = userResult.get("password").toString();
+        User user = populateUser(userResult);
 
         return ok(Json.toJson(user));
     }
 
     public static Result updateUser(User updatedUser, String existingUserID) {
+
+        DBCollection collection = configureMongoClient();
+
+        // search for user
+        DBObject userResult = collection.findOne(new BasicDBObject().append("_id", new ObjectId(existingUserID)));
+
+        // return 404 if not found
+        if (userResult == null) {
+            return notFound("User not found with id " + existingUserID);
+        }
+
+        BasicDBObject dbObject = new BasicDBObject();
+        dbObject.append("username", updatedUser.username);
+        dbObject.append("password", updatedUser.password);
+
+        collection.update(userResult, dbObject);
+
         return ok();
     }
 
@@ -97,5 +111,15 @@ public abstract class MongoModel extends Model {
         DB db = mongoClient.getDB("mydb");
 
         return db.getCollection("testData");
+    }
+
+    private static User populateUser(DBObject dbObject) {
+
+        User user = new User();
+        user.id = dbObject.get("_id").toString();
+        user.username = dbObject.get("username").toString();
+        user.password = dbObject.get("password").toString();
+
+        return user;
     }
 }
