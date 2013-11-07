@@ -73,5 +73,7 @@ commented out.)
 Last, change the class being extended in the User.java class.  Currently, User is extending
 the MySQLModel class.  Simply make the change to extend the MongoModel class instead.
 
+                public class User extends MongoModel
 
 
+After the changes have been made, clean and compile and you should be ready to roll!
