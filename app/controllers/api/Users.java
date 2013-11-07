@@ -7,6 +7,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,8 +28,11 @@ public class Users extends ApiBaseController {
     public static Result create(){
 
         JsonNode json = request().body().asJson();
+
         ObjectMapper om = new ObjectMapper();
+
         User user = om.convertValue(json, User.class);
+        user.created = new Date();
 
         return User.createUser(user);
     }
@@ -43,8 +47,12 @@ public class Users extends ApiBaseController {
     public static Result update(String id) {
 
         JsonNode json = request().body().asJson();
+
         ObjectMapper om = new ObjectMapper();
+
         User updatedUser = om.convertValue(json, User.class);
+        updatedUser.id = id;
+        updatedUser.updated = new Date();
 
         return User.updateUser(updatedUser, id);
     }
