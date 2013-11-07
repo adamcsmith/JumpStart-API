@@ -32,9 +32,6 @@ public abstract class MySQLModel extends Model {
     public Date updated;
 
 
-
-    // TODO: consider returning Results instead of User objects
-
     public static Result createUser(User user) {
 
         user.created = new Date();
