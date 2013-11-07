@@ -19,11 +19,10 @@ import static play.data.Form.form;
 public class Users extends ApiBaseController {
 
     /**
-     * The below CRUD operations currently work for the in memory database as well
+     * The below CRUD operations currently work for the in-memory database as well
      * as a MySQL database.  Currently working on testing with mongodb.  Think mongo
      * will force us to abstract these out more.
      */
-
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result create(){
@@ -35,16 +34,14 @@ public class Users extends ApiBaseController {
             return errorResult(userForm.errors());
         } else {
             User user = userForm.get();
-            Result result = User.createUser(user);
-            return result;
+            return User.createUser();
         }
     }
 
 
     public static Result retrieve(String id){
 
-        Result result = User.retrieveUser(id);
-        return result;
+        return User.retrieveUser(id);
     }
 
 //    public static Result retrieve(String id){
@@ -68,16 +65,14 @@ public class Users extends ApiBaseController {
         userForm = userForm.bind(request().body().asJson());
 
         User updatedUser  = userForm.get();
-        Result result = User.updateUser(updatedUser, id);
 
-        return result;
+        return User.updateUser(updatedUser, id);
     }
 
 
     public static Result delete(String id) {
 
-        Result result = User.deleteUser(id);
-        return result;
+        return User.deleteUser(id);
     }
 
     // method is strictly for testing purposes
