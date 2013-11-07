@@ -62,7 +62,10 @@ public abstract class MongoModel extends Model {
         // save the new user
         collection.save(dbObject);
 
-        return ok();
+        //populate a user so we can return to the caller
+        User createdUser = populateUser(dbObject);
+
+        return ok(Json.toJson(createdUser));
     }
 
     /**
@@ -114,7 +117,10 @@ public abstract class MongoModel extends Model {
         // update the user in the db
         collection.update(userResult, dbObject);
 
-        return ok();
+        //populate a user so we can return to the caller
+        User user = populateUser(dbObject);
+
+        return ok(Json.toJson(user));
     }
 
     /**
