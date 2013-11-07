@@ -34,13 +34,13 @@ public abstract class MongoModel extends Model {
     @Temporal(TemporalType.DATE)
     public Date updated;
 
-    public static Result createUser() {
+    public static Result createUser(User user) {
 
         DBCollection collection = configureMongoClient();
 
         BasicDBObject test = new BasicDBObject();
-        test.append("username", "tyson");
-        test.append("password", "dog treats");
+        test.append("username", user.username);
+        test.append("password", user.password);
 
         collection.save(test);
 

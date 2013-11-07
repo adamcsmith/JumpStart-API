@@ -1,14 +1,13 @@
 package controllers.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import models.User;
-import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 
 import java.util.List;
-
-import static play.data.Form.form;
 
 /**
  * Created with IntelliJ IDEA for jumpstart
@@ -27,15 +26,11 @@ public class Users extends ApiBaseController {
     @BodyParser.Of(BodyParser.Json.class)
     public static Result create(){
 
-        Form<User> userForm = form(User.class);
-        userForm = userForm.bind(request().body().asJson());
+        JsonNode json = request().body().asJson();
+        ObjectMapper om = new ObjectMapper();
+        User user = om.convertValue(json, User.class);
 
-        if(userForm.hasErrors()){
-            return errorResult(userForm.errors());
-        } else {
-            User user = userForm.get();
-            return User.createUser();
-        }
+        return User.createUser(user);
     }
 
 
@@ -44,27 +39,12 @@ public class Users extends ApiBaseController {
         return User.retrieveUser(id);
     }
 
-//    public static Result retrieve(String id){
-//
-//        User user = null;
-//
-//        try {
-//            user = User.retrieveUser(id);
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-//
-//        return ok(Json.toJson(user));
-//    }
-
-
     @BodyParser.Of(BodyParser.Json.class)
     public static Result update(String id) {
 
-        Form<User> userForm = form(User.class);
-        userForm = userForm.bind(request().body().asJson());
-
-        User updatedUser  = userForm.get();
+        JsonNode json = request().body().asJson();
+        ObjectMapper om = new ObjectMapper();
+        User updatedUser = om.convertValue(json, User.class);
 
         return User.updateUser(updatedUser, id);
     }
