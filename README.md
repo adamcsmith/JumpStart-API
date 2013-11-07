@@ -4,10 +4,13 @@ jumpstart
 JumpStart is a project that provides an out-of-the-box default Restful API for user
 authentication.
 
+
 Currently, the JumpStart-API project supports the following three database types:
+
     - Standard Play In-Memory Database
     - MySQL databases
     - MongoDB databases
+
 
 
 *************************************************************************************
