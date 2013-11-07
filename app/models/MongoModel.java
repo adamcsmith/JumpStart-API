@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import java.net.UnknownHostException;
 import java.util.Date;
 
+import static play.mvc.Results.badRequest;
 import static play.mvc.Results.notFound;
 import static play.mvc.Results.ok;
 
@@ -52,7 +53,11 @@ public abstract class MongoModel extends Model {
         // maps fields from user object onto db object
         BasicDBObject dbObject = createDBObjectFromUser(user);
 
-        // TODO: add validation to make sure credentials don't already exist
+        // make sure credentials don't already exist
+        DBObject userResult = collection.findOne(new BasicDBObject().append("username", user.username));
+        if (userResult != null) {
+            return badRequest("User with name " + user.username + "already exists.");
+        }
 
         // save the new user
         collection.save(dbObject);
