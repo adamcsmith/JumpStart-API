@@ -31,7 +31,12 @@ public abstract class MySQLModel extends Model {
     @Temporal(TemporalType.DATE)
     public Date updated;
 
-
+    /**
+     * Inserts new user into db
+     *
+     * @param user - user to be created
+     * @return
+     */
     public static Result createUser(User user) {
 
         user.save();
@@ -41,8 +46,15 @@ public abstract class MySQLModel extends Model {
         return ok(Json.toJson(user));
     }
 
+    /**
+     * Retrieves user info from db
+     *
+     * @param id - id of the user we are searching for
+     * @return
+     */
     public static Result retrieveUser(String id) {
 
+        // user search
         User user = User.find.byId(Long.parseLong(id));
 
         if (user == null) {
@@ -52,6 +64,13 @@ public abstract class MySQLModel extends Model {
         }
     }
 
+    /**
+     * Updates an existing user in the db
+     *
+     * @param updatedUser - user with updated fields
+     * @param existingUserID - id of the user we will be updating
+     * @return
+     */
     public static Result updateUser(User updatedUser, String existingUserID) {
 
         User existingUser = User.find.byId(Long.parseLong(existingUserID));
@@ -65,8 +84,15 @@ public abstract class MySQLModel extends Model {
         return ok(Json.toJson(updatedUser));
     }
 
+    /**
+     * Removes user from db
+     *
+     * @param id - id of the user to be deleted
+     * @return
+     */
     public static Result deleteUser(String id) {
 
+        // user search
         User user = User.find.byId(Long.parseLong(id));
 
         if (user == null) {

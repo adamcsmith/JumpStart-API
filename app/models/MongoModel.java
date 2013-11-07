@@ -23,6 +23,7 @@ import static play.mvc.Results.ok;
  * User: adamcsmith
  * Date: 11/5/13
  */
+
 // TODO: only extending Model to appease errors - need a better fix
 @MappedSuperclass
 public abstract class MongoModel extends Model {
@@ -139,7 +140,7 @@ public abstract class MongoModel extends Model {
         // delete user
         collection.remove(userResult);
 
-        return ok();
+        return ok("User successfully deleted.");
     }
 
     /**
