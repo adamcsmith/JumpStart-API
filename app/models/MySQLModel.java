@@ -10,9 +10,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
-import static controllers.api.ApiBaseController.badRequest;
-import static controllers.api.ApiBaseController.notFound;
-import static play.mvc.Results.ok;
+import static controllers.api.ApiBaseController.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,7 +59,7 @@ public abstract class MySQLModel extends Model {
         // user search
         User user = User.find.byId(Long.parseLong(id));
         if (user == null) {
-            return notFound("User with id " + id + "not found");
+            return notFound("User with id " + id + " not found");
         } else {
             return ok(Json.toJson(user));
         }
@@ -79,7 +77,7 @@ public abstract class MySQLModel extends Model {
         // find the user to be updated
         User existingUser = User.find.byId(Long.parseLong(existingUserID));
         if (existingUser == null) {
-           return notFound("User with id " + existingUserID + "not found. Update failed.");
+           return notFound("User with id " + existingUserID + " not found. Update failed.");
         }
 
         // check to see if user changed username
@@ -108,11 +106,12 @@ public abstract class MySQLModel extends Model {
         // user search
         User user = User.find.byId(Long.parseLong(id));
         if (user == null) {
-            return notFound("User with id " + id + "not found.  Delete failed.");
+            return notFound("User with id " + id + " not found.  Delete failed.");
         }
 
         user.delete();
-        return ok("Woohoo!  User with id " + id + "successfully deleted!");
+
+        return ok("Woohoo! User " + user.username + " successfully deleted");
     }
 
 }
