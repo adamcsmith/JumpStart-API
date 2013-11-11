@@ -45,7 +45,7 @@ public class Users extends ApiBaseController {
     }
 
     /**
-     * Update a user
+     * Update a user based off an id
      *
      * @param id - id of user to be updated
      * @return - updated result

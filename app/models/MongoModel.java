@@ -14,8 +14,8 @@ import javax.persistence.TemporalType;
 import java.net.UnknownHostException;
 import java.util.Date;
 
-import static play.mvc.Results.badRequest;
-import static play.mvc.Results.notFound;
+import static controllers.api.ApiBaseController.badRequest;
+import static controllers.api.ApiBaseController.notFound;
 import static play.mvc.Results.ok;
 
 /**
@@ -57,7 +57,7 @@ public abstract class MongoModel extends Model {
         // make sure credentials don't already exist
         DBObject userResult = collection.findOne(new BasicDBObject().append("username", user.username));
         if (userResult != null) {
-            return badRequest("User with name " + user.username + "already exists.");
+            return badRequest(Json.toJson("User with name " + user.username + "already exists."));
         }
 
         // save the new user
@@ -112,7 +112,14 @@ public abstract class MongoModel extends Model {
             return notFound("User not found with id " + existingUserID);
         }
 
-        // TODO: add check to make sure that user did not change username to one that already exists
+        // check to make sure that user did not try and change username to one that already exists
+        if (!userResult.get("username").toString().equals(updatedUser.username)) {
+
+            DBObject userNameCheck = collection.findOne(new BasicDBObject().append("username", updatedUser.username));
+            if (userNameCheck != null) {
+                return badRequest(Json.toJson("User with name " + updatedUser.username + "already exists."));
+            }
+        }
 
         // maps fields from user object onto db object
         BasicDBObject dbObject = createDBObjectFromUser(updatedUser);
