@@ -7,7 +7,6 @@ authentication.
 
 Currently, the JumpStart-API project supports the following three database types:
 
-    - Standard Play In-Memory Database
     - MySQL databases
     - MongoDB databases
 
@@ -29,7 +28,7 @@ snippet is not commented out in the application.conf file.
 ********************************* Using MySQL ***************************************
 *************************************************************************************
 
-In order to ready the project to use a MySQL database, two changes need to be made to the
+In order to ready the project to use a MySQL database, a few changes need to be made to the
 application.conf file.
 
 First, make sure the in-memory db snippet is commented out.  Should look like below:
@@ -44,6 +43,14 @@ Next, be sure to update the following code snippet below to match your database 
         db.default.url="jdbc:mysql://127.0.0.1:3306/jumpstart?characterEncoding=UTF-8"
         db.default.user=root
         db.default.pass=
+
+Make sure that the MySQL db credentials are the only credentials currently commented IN.
+
+
+Also, make sure the Ebean configuration code is commented IN (as seen below).
+
+                ebean.default="models.*"
+
 
 Once this has been successfully configured, you are ready to code!
 
