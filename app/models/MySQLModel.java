@@ -1,5 +1,6 @@
 package models;
 
+import controllers.api.ApiBaseController;
 import play.db.ebean.Model;
 import play.libs.Json;
 import play.mvc.Result;
@@ -9,8 +10,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
-
-import static controllers.api.ApiBaseController.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,12 +39,12 @@ public abstract class MySQLModel extends Model {
         // make sure username doesn't already exist
         User userCheck = User.find.where().ilike("username", user.username).findUnique();
         if (userCheck != null) {
-            return badRequest("Bummer.  A user with that username already exists.");
+            return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
         }
 
         user.save();
 
-        return ok(Json.toJson(user));
+        return ApiBaseController.ok(Json.toJson(user));
     }
 
     /**
@@ -59,9 +58,9 @@ public abstract class MySQLModel extends Model {
         // user search
         User user = User.find.byId(Long.parseLong(id));
         if (user == null) {
-            return notFound("User with id " + id + " not found");
+            return ApiBaseController.notFound("User with id " + id + " not found");
         } else {
-            return ok(Json.toJson(user));
+            return ApiBaseController.ok(Json.toJson(user));
         }
     }
 
@@ -77,7 +76,7 @@ public abstract class MySQLModel extends Model {
         // find the user to be updated
         User existingUser = User.find.byId(Long.parseLong(existingUserID));
         if (existingUser == null) {
-           return notFound("User with id " + existingUserID + " not found. Update failed.");
+           return ApiBaseController.notFound("User with id " + existingUserID + " not found. Update failed.");
         }
 
         // check to see if user changed username
@@ -85,14 +84,14 @@ public abstract class MySQLModel extends Model {
             // make sure new username doesn't already exist
             User userCheck = User.find.where().ilike("username", updatedUser.username).findUnique();
             if (userCheck != null) {
-                return badRequest("Bummer.  A user with that username already exists.");
+                return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
             }
         }
 
         updatedUser.created = existingUser.created;
         updatedUser.update();
 
-        return ok(Json.toJson(updatedUser));
+        return ApiBaseController.ok(Json.toJson(updatedUser));
     }
 
     /**
@@ -106,12 +105,12 @@ public abstract class MySQLModel extends Model {
         // user search
         User user = User.find.byId(Long.parseLong(id));
         if (user == null) {
-            return notFound("User with id " + id + " not found.  Delete failed.");
+            return ApiBaseController.notFound("User with id " + id + " not found.  Delete failed.");
         }
 
         user.delete();
 
-        return ok("Woohoo! User " + user.username + " successfully deleted");
+        return ApiBaseController.ok("Woohoo! User " + user.username + " successfully deleted");
     }
 
 }
