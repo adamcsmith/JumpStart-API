@@ -3,7 +3,6 @@ package models;
 import play.db.ebean.Model;
 import play.libs.Json;
 import play.mvc.Result;
-import utils.SecurityUtil;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -11,6 +10,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
+import static controllers.api.ApiBaseController.badRequest;
 import static controllers.api.ApiBaseController.notFound;
 import static play.mvc.Results.ok;
 
@@ -39,9 +39,13 @@ public abstract class MySQLModel extends Model {
      */
     public static Result createUser(User user) {
 
+        // make sure username doesn't already exist
+        User userCheck = User.find.where().ilike("username", user.username).findUnique();
+        if (userCheck != null) {
+            return badRequest("Bummer.  A user with that username already exists.");
+        }
+
         user.save();
-        // TODO: strip out session logic
-        SecurityUtil.createAuthenticatedSession(user);
 
         return ok(Json.toJson(user));
     }
@@ -56,7 +60,6 @@ public abstract class MySQLModel extends Model {
 
         // user search
         User user = User.find.byId(Long.parseLong(id));
-
         if (user == null) {
             return notFound("User with id " + id + "not found");
         } else {
@@ -73,9 +76,19 @@ public abstract class MySQLModel extends Model {
      */
     public static Result updateUser(User updatedUser, String existingUserID) {
 
+        // find the user to be updated
         User existingUser = User.find.byId(Long.parseLong(existingUserID));
         if (existingUser == null) {
            return notFound("User with id " + existingUserID + "not found. Update failed.");
+        }
+
+        // check to see if user changed username
+        if (!updatedUser.username.equals(existingUser.username)) {
+            // make sure new username doesn't already exist
+            User userCheck = User.find.where().ilike("username", updatedUser.username).findUnique();
+            if (userCheck != null) {
+                return badRequest("Bummer.  A user with that username already exists.");
+            }
         }
 
         updatedUser.created = existingUser.created;
@@ -94,13 +107,12 @@ public abstract class MySQLModel extends Model {
 
         // user search
         User user = User.find.byId(Long.parseLong(id));
-
         if (user == null) {
             return notFound("User with id " + id + "not found.  Delete failed.");
-        } else {
-            user.delete();
-            return ok("Woohoo!  User with id " + id + "successfully deleted!");
         }
+
+        user.delete();
+        return ok("Woohoo!  User with id " + id + "successfully deleted!");
     }
 
 }

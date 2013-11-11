@@ -149,7 +149,7 @@ public abstract class MongoModel extends Model {
         // delete user
         collection.remove(userResult);
 
-        return ok("User successfully deleted.");
+        return ok("Woohoo!  User successfully deleted.");
     }
 
     /**

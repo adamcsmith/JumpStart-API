@@ -115,6 +115,7 @@ public class User extends MySQLModel {
      ***********************************************************************/
 
     public static User connect(String username, String password){
+
         if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
             throw new RuntimeException("error.usernameAndPasswordRequired");
         }
