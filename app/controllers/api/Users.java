@@ -3,8 +3,10 @@ package controllers.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.User;
+import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
+import utils.SecurityUtil;
 
 import java.util.Date;
 
@@ -30,7 +32,13 @@ public class Users extends ApiBaseController {
         User user = om.convertValue(json, User.class);
         user.created = new Date();
 
-        return User.createUser(user);
+        // create the user
+        User createdUser = User.createUser(user);
+
+        // create session
+        SecurityUtil.createAuthenticatedSession(user);
+
+        return successfulSaveResult(createdUser.id);
     }
 
     /**
@@ -41,7 +49,14 @@ public class Users extends ApiBaseController {
      */
     public static Result retrieve(String id){
 
-        return User.retrieveUser(id);
+        User user = User.retrieveUser(id);
+        if (user == null) {
+            return ApiBaseController.notFound("User with id " + id + " not found");
+        }
+
+        // TODO: figure out what we really want to send back to the caller
+
+        return ApiBaseController.ok(Json.toJson(user));
     }
 
     /**
@@ -53,15 +68,25 @@ public class Users extends ApiBaseController {
     @BodyParser.Of(BodyParser.Json.class)
     public static Result update(String id) {
 
+        // find the user to be updated
+        User existingUser = User.retrieveUser(id);
+        if (existingUser == null) {
+            return ApiBaseController.notFound("User with id " + id + " not found");
+        }
+
         JsonNode json = request().body().asJson();
 
         ObjectMapper om = new ObjectMapper();
 
+        // grab the updated user fields
         User updatedUser = om.convertValue(json, User.class);
         updatedUser.id = id;
         updatedUser.updated = new Date();
 
-        return User.updateUser(updatedUser, id);
+        // update the user
+        User.updateUser(existingUser, updatedUser);
+
+        return successfulSaveResult(updatedUser.id);
     }
 
     /**
@@ -72,7 +97,13 @@ public class Users extends ApiBaseController {
      */
     public static Result delete(String id) {
 
-        return User.deleteUser(id);
+        User user = User.retrieveUser(id);
+        if (user == null) {
+            return ApiBaseController.notFound("User with id " + id + " not found.  Delete failed.");
+        } else {
+            User.deleteUser(user);
+            return ApiBaseController.ok("Woohoo! User " + user.username + " successfully deleted");
+        }
     }
 
 }

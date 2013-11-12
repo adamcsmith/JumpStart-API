@@ -4,8 +4,6 @@ import com.mongodb.*;
 import org.bson.types.ObjectId;
 import play.Play;
 import play.db.ebean.Model;
-import play.libs.Json;
-import play.mvc.Result;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -13,10 +11,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.net.UnknownHostException;
 import java.util.Date;
-
-import static controllers.api.ApiBaseController.badRequest;
-import static controllers.api.ApiBaseController.notFound;
-import static play.mvc.Results.ok;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,7 +41,7 @@ public abstract class MongoModel extends Model {
      * @param user - user to be created
      * @return - creation result
      */
-    public static Result createUser(User user) {
+    public static User createUser(User user) {
 
         DBCollection collection = configureMongoClient();
 
@@ -57,7 +51,7 @@ public abstract class MongoModel extends Model {
         // make sure credentials don't already exist
         DBObject userResult = collection.findOne(new BasicDBObject().append("username", user.username));
         if (userResult != null) {
-            return badRequest(Json.toJson("User with name " + user.username + "already exists."));
+            throw new RuntimeException("User with name " + user.username + " already exists.");
         }
 
         // save the new user
@@ -66,7 +60,7 @@ public abstract class MongoModel extends Model {
         //populate a user so we can return to the caller
         User createdUser = populateUser(dbObject);
 
-        return ok(Json.toJson(createdUser));
+        return createdUser;
     }
 
     /**
@@ -75,81 +69,67 @@ public abstract class MongoModel extends Model {
      * @param id - id of the user we are searching for
      * @return - retrieve result
      */
-    public static Result retrieveUser(String id) {
+    public static User retrieveUser(String id) {
 
         DBCollection collection = configureMongoClient();
 
         // search for user
         DBObject userResult = collection.findOne(new BasicDBObject().append("_id", new ObjectId(id)));
 
-        // return 404 if not found
-        if (userResult == null) {
-            return notFound("User not found with id " + id);
-        }
-
         // create and populate user object based on db object returned
         User user = populateUser(userResult);
 
-        return ok(Json.toJson(user));
+        return user;
     }
 
     /**
      * Updates an existing user in the db
      *
      * @param updatedUser - user with updated fields
-     * @param existingUserID - id of the user we will be updating
+     * @param existingUser - user we will be updating
      * @return - update result
      */
-    public static Result updateUser(User updatedUser, String existingUserID) {
+    public static User updateUser(User existingUser, User updatedUser) {
 
         DBCollection collection = configureMongoClient();
 
-        // search for user
-        DBObject userResult = collection.findOne(new BasicDBObject().append("_id", new ObjectId(existingUserID)));
-
-        // return 404 if not found
-        if (userResult == null) {
-            return notFound("User not found with id " + existingUserID);
-        }
-
         // check to make sure that user did not try and change username to one that already exists
-        if (!userResult.get("username").toString().equals(updatedUser.username)) {
+        if (!existingUser.username.equals(updatedUser.username)) {
 
             DBObject userNameCheck = collection.findOne(new BasicDBObject().append("username", updatedUser.username));
             if (userNameCheck != null) {
-                return badRequest(Json.toJson("User with name " + updatedUser.username + "already exists."));
+                throw new RuntimeException("User with name " + updatedUser.username + "already exists.");
             }
         }
 
         // maps fields from user object onto db object
-        BasicDBObject dbObject = createDBObjectFromUser(updatedUser);
+        BasicDBObject updatedDbObject = createDBObjectFromUser(updatedUser);
+        DBObject existingDbObject = createDBObjectFromUser(existingUser);
 
         // update the user in the db
-        collection.update(userResult, dbObject);
+        collection.update(existingDbObject, updatedDbObject);
 
         //populate a user so we can return to the caller
-        User user = populateUser(dbObject);
+        User user = populateUser(updatedDbObject);
 
-        return ok(Json.toJson(user));
+        return user;
     }
 
     /**
      * Removes user from db
      *
-     * @param id - id of the user to be deleted
+     * @param user - user to be deleted
      * @return - delete result
      */
-    public static Result deleteUser(String id) {
+    public static void deleteUser(User user) {
 
         DBCollection collection = configureMongoClient();
 
         // find our database object to delete
-        DBObject userResult = collection.findOne(new BasicDBObject().append("_id", new ObjectId(id)));
+        DBObject userResult = collection.findOne(new BasicDBObject().append("_id", new ObjectId(user.id)));
 
         // delete user
         collection.remove(userResult);
-
-        return ok("Woohoo!  User successfully deleted.");
     }
 
     /**
