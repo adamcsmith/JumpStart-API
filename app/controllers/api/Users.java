@@ -36,7 +36,7 @@ public class Users extends ApiBaseController {
         User createdUser = User.createUser(user);
 
         // create session
-        SecurityUtil.createAuthenticatedSession(user);
+        SecurityUtil.createAuthenticatedSession(createdUser);
 
         return successfulSaveResult(createdUser.id);
     }
