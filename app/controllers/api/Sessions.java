@@ -35,7 +35,6 @@ public class Sessions extends ApiBaseController {
 
         SecurityUtil.createAuthenticatedSession(user);
         return successfulSaveResult(user.id);
-
     }
 
     public static Result delete(){

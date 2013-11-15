@@ -120,7 +120,7 @@ public class User extends MySQLModel {
             throw new RuntimeException("error.usernameAndPasswordRequired");
         }
 
-        User user = find.where().ieq("username", username).findUnique();
+        User user = findUserByUsername(username);
 
         //no user found
         if(user == null){

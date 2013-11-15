@@ -133,6 +133,21 @@ public abstract class MongoModel extends Model {
     }
 
     /**
+     * Looks up a user in database by their username
+     *
+     * @param username
+     * @return - found user or null user
+     */
+    public static User findUserByUsername(String username) {
+
+        DBCollection collection = configureMongoClient();
+
+        DBObject mongoUser = collection.findOne(new BasicDBObject().append("username", username));
+
+        return populateUser(mongoUser);
+    }
+
+    /**
      * Configure mongo client by setting db name and table name
      *
      * @return - configured dbcollection
@@ -185,12 +200,12 @@ public abstract class MongoModel extends Model {
 
         user.id = dbObject.get("_id").toString();
         user.username = dbObject.get("username").toString();
-        user.password = dbObject.get("password").toString();
+//        user.password = dbObject.get("password").toString();
         // TODO: only throwing NPE on this one.....why?
 //        user.temporaryPassword = dbObject.get("temporaryPassword").toString();
-        user.temporaryPasswordExpiration = (Date) dbObject.get("temporaryPasswordExpiration");
-        user.lastLogin = (Date) dbObject.get("lastLogin");
-        user.failedLoginAttempts = (Integer) dbObject.get("failedLoginAttempts");
+//        user.temporaryPasswordExpiration = (Date) dbObject.get("temporaryPasswordExpiration");
+//        user.lastLogin = (Date) dbObject.get("lastLogin");
+//        user.failedLoginAttempts = (Integer) dbObject.get("failedLoginAttempts");
         user.created = (Date) dbObject.get("created");
         user.updated = (Date) dbObject.get("updated");
 

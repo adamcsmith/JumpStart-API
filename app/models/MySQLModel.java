@@ -91,4 +91,15 @@ public abstract class MySQLModel extends Model {
         user.delete();
     }
 
+    /**
+     * Looks up user in db based off username
+     *
+     * @param username
+     * @return - found user or null user
+     */
+    public static User findUserByUsername(String username) {
+
+        return User.find.where().ieq("username", username).findUnique();
+    }
+
 }
