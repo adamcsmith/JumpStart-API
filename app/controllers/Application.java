@@ -1,11 +1,9 @@
 package controllers;
 
 import models.User;
-import play.*;
-import play.mvc.*;
-
+import play.mvc.Controller;
+import play.mvc.Result;
 import utils.SecurityUtil;
-import views.html.*;
 import views.html.index;
 
 /**
@@ -18,4 +16,5 @@ public class Application extends Controller {
         User user = SecurityUtil.connectedUser();
         return ok(index.render(user));
     }
+
 }

@@ -32,6 +32,12 @@ public class Users extends ApiBaseController {
         User user = om.convertValue(json, User.class);
         user.created = new Date();
 
+        // check to make sure username doesn't already exist
+        User userCheck = User.findUserByUsername(user.username);
+        if (userCheck != null) {
+            return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
+        }
+
         // create the user
         User createdUser = User.createUser(user);
 
@@ -47,9 +53,9 @@ public class Users extends ApiBaseController {
      * @param id - user id
      * @return - retrieve result
      */
-    public static Result retrieve(String id){
+    public static Result get(String id){
 
-        User user = User.retrieveUser(id);
+        User user = User.findUserById(id);
         if (user == null) {
             return ApiBaseController.notFound("User with id " + id + " not found");
         }
@@ -69,7 +75,7 @@ public class Users extends ApiBaseController {
     public static Result update(String id) {
 
         // find the user to be updated
-        User existingUser = User.retrieveUser(id);
+        User existingUser = User.findUserById(id);
         if (existingUser == null) {
             return ApiBaseController.notFound("User with id " + id + " not found");
         }
@@ -81,10 +87,20 @@ public class Users extends ApiBaseController {
         // grab the updated user fields
         User updatedUser = om.convertValue(json, User.class);
         updatedUser.id = id;
+        updatedUser.created = existingUser.created;
         updatedUser.updated = new Date();
 
+        // check for username change
+        if (!updatedUser.username.equals(existingUser.username)) {
+            // check to make sure username doesn't already exist
+            User userCheck = User.findUserByUsername(updatedUser.username);
+            if (userCheck != null) {
+                return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
+            }
+        }
+
         // update the user
-        User.updateUser(existingUser, updatedUser);
+        User.updateUser(updatedUser);
 
         return successfulSaveResult(updatedUser.id);
     }
@@ -97,7 +113,7 @@ public class Users extends ApiBaseController {
      */
     public static Result delete(String id) {
 
-        User user = User.retrieveUser(id);
+        User user = User.findUserById(id);
         if (user == null) {
             return ApiBaseController.notFound("User with id " + id + " not found.  Delete failed.");
         } else {
