@@ -1,15 +1,19 @@
 package models;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import helpers.MongoHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
+import play.Play;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import play.libs.Crypto;
 
 import javax.persistence.*;
-
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +28,14 @@ import static play.data.validation.Constraints.Required;
  */
 @Entity
 @Table(name = "APP_USER")
-public class User extends MySQLModel {
+public class User extends ModelBase {
+
+    // pulls data from application.conf and sets local variables
+    private static final String DBTYPE = Play.application().configuration().getString("jumpstart.dbtype");
+    private static final String MONGO = "mongo";
+    private static final String MYSQL = "mysql";
+
+    private static final String USER_COLLECTION = Play.application().configuration().getString("mongo.userCollectionName");
 
     /***********************************************************************
      * Enums and Static fields                                             *
@@ -214,4 +225,167 @@ public class User extends MySQLModel {
         return errors.size() > 0 ? errors : null;
     }
 
+
+    /***********************************************************************
+     * 'Reflection' methods                                                  *
+     ***********************************************************************/
+
+    /**
+     * Looks up a user in database by their username
+     *
+     * @param username
+     * @return - found user or null user
+     */
+    public static User findUserByUsername(String username) {
+
+        if (DBTYPE.equals(MONGO)) {
+            DBCollection collection = MongoHelper.getDBCollection(USER_COLLECTION);
+            DBObject mongoUser = collection.findOne(new BasicDBObject().append("username", username));
+            if (mongoUser != null) {
+               return populateUser(mongoUser);
+            } else {
+                return null;
+            }
+        } else if (DBTYPE.equals(MYSQL)) {
+            return User.find.where().ieq("username", username).findUnique();
+        } else {
+            throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
+                    "for the db.default.type setting.");
+        }
+    }
+
+    /**
+     * Looks up a user in database by their username
+     *
+     * @param id
+     * @return - found user or null user
+     */
+    public static User findUserById(String id) {
+
+        if (DBTYPE.equals(MONGO)) {
+            DBCollection collection = MongoHelper.getDBCollection(USER_COLLECTION);
+            DBObject mongoUser = collection.findOne(new BasicDBObject().append("_id", new ObjectId(id)));
+            if (mongoUser != null) {
+                return populateUser(mongoUser);
+            } else {
+                return null;
+            }
+        } else if (DBTYPE.equals(MYSQL)) {
+            return User.find.byId(Long.parseLong(id));
+        } else {
+            throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
+                    "for the db.default.type setting.");
+        }
+    }
+
+    /**
+     *
+     * @param user
+     * @return
+     */
+    public static User createUser(User user) {
+
+        User createdUser;
+
+        if (DBTYPE.equals(MONGO)) {
+           BasicDBObject dbObject = createDBObjectFromUser(user);
+           DBObject createdDBObject = (DBObject) create(dbObject, USER_COLLECTION);
+           createdUser = populateUser(createdDBObject);
+           return createdUser;
+        } else if (DBTYPE.equals(MYSQL)) {
+           createdUser = (User) create(user, null);
+           return createdUser;
+        } else {
+            throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
+                    "for the db.default.type setting.");
+        }
+
+    }
+
+    /**
+     *
+     * @param user
+     */
+    public static void updateUser(User user) {
+
+        if (DBTYPE.equals(MONGO)) {
+            BasicDBObject dbObject = createDBObjectFromUser(user);
+            updateObject(dbObject, USER_COLLECTION);
+        } else if (DBTYPE.equals(MYSQL)) {
+            updateObject(user, null);
+        } else {
+            throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
+                    "for the db.default.type setting.");
+        }
+
+    }
+
+    /**
+     *
+     * @param user
+     */
+    public static void deleteUser(User user) {
+
+        if (DBTYPE.equals(MONGO)) {
+            BasicDBObject dbObject = createDBObjectFromUser(user);
+            delete(dbObject, USER_COLLECTION);
+        } else if (DBTYPE.equals(MYSQL)) {
+            delete(user, null);
+        } else {
+            throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
+                    "for the db.default.type setting.");
+        }
+
+    }
+
+    /***********************************************************************
+     * Mongo convenience methods                                           *
+     ***********************************************************************/
+
+    /**
+     * populates a User object based on the fields of a DBObject
+     *
+     * @param dbObject - object with fields we want mapped to a User
+     * @return - populated user object
+     */
+    private static User populateUser(DBObject dbObject) {
+
+        User user = new User();
+
+        user.id = dbObject.get("_id").toString();
+        user.username = dbObject.get("username").toString();
+//        user.password = dbObject.get("password").toString();
+        // TODO: only throwing NPE on this one.....why?
+//        user.temporaryPassword = dbObject.get("temporaryPassword").toString();
+//        user.temporaryPasswordExpiration = (Date) dbObject.get("temporaryPasswordExpiration");
+//        user.lastLogin = (Date) dbObject.get("lastLogin");
+//        user.failedLoginAttempts = (Integer) dbObject.get("failedLoginAttempts");
+        user.created = (Date) dbObject.get("created");
+        user.updated = (Date) dbObject.get("updated");
+
+        return user;
+    }
+
+    /**
+     * Builds a database object based on the fields the passed in User has
+     *
+     * @param user - user to map the fields from
+     * @return - populated dbobject
+     */
+    public static BasicDBObject createDBObjectFromUser(User user) {
+
+        BasicDBObject dbObject = new BasicDBObject();
+
+        dbObject.append("_id", new ObjectId(user.id));
+        dbObject.append("username", user.username);
+        dbObject.append("password", user.password);
+        dbObject.append("temporaryPassword", user.temporaryPassword);
+        dbObject.append("temporaryPasswordExpiration", user.temporaryPasswordExpiration);
+        dbObject.append("lastLogin", user.lastLogin);
+        dbObject.append("failedLoginAttempts", user.failedLoginAttempts);
+        dbObject.append("created", user.created);
+        dbObject.append("updated", user.updated);
+
+        return dbObject;
+    }
 }

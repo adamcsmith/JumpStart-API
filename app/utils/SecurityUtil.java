@@ -25,7 +25,7 @@ public class SecurityUtil {
         Http.Session session = Http.Context.current().session();
         String userId = session != null ? session.get(SESSION_USER_IDENTIFIER) : null;
         if(userId != null){
-            return User.retrieveUser(userId);
+            return User.findUserById(userId);
         }
 
         return null;
