@@ -12,7 +12,7 @@ GET           /register             controllers.Application.index()
 
 # USERS
 POST          /api/users            controllers.api.Users.create()
-GET           /api/users/:id        controllers.api.Users.retrieve(id: String)
+GET           /api/users/:id        controllers.api.Users.get(id: String)
 PUT           /api/users/:id        controllers.api.Users.update(id: String)
 DELETE        /api/users/:id        controllers.api.Users.delete(id: String)
 
