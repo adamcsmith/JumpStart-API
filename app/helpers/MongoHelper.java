@@ -16,8 +16,8 @@ import java.net.UnknownHostException;
 public class MongoHelper {
 
     // pulls data from application.conf and sets local variables
-    private static final String DBNAME = Play.application().configuration().getString("mongo.dbName");
-    private static final String MONGOURI = Play.application().configuration().getString("mongo.uri");
+    private static final String DB_NAME = Play.application().configuration().getString("mongo.dbName");
+    private static final String MONGO_URI = Play.application().configuration().getString("mongo.uri");
 
     /**
      * Configure mongo client by setting db name and table name
@@ -26,7 +26,7 @@ public class MongoHelper {
      */
     private static MongoClient getMongoClient() {
 
-        MongoClientURI mongoClientURI = new MongoClientURI(MONGOURI);
+        MongoClientURI mongoClientURI = new MongoClientURI(MONGO_URI);
 
         MongoClient mongoClient = null;
         try {
@@ -40,7 +40,7 @@ public class MongoHelper {
 
     private static DB getDB() {
 
-        return getMongoClient().getDB(DBNAME);
+        return getMongoClient().getDB(DB_NAME);
     }
 
     public static DBCollection getDBCollection(String collectionName) {

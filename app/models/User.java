@@ -31,7 +31,7 @@ import static play.data.validation.Constraints.Required;
 public class User extends ModelBase {
 
     // pulls data from application.conf and sets local variables
-    private static final String DBTYPE = Play.application().configuration().getString("jumpstart.dbtype");
+    private static final String DB_TYPE = Play.application().configuration().getString("jumpstart.dbtype");
     private static final String MONGO = "mongo";
     private static final String MYSQL = "mysql";
 
@@ -238,7 +238,7 @@ public class User extends ModelBase {
      */
     public static User findUserByUsername(String username) {
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
             DBCollection collection = MongoHelper.getDBCollection(USER_COLLECTION);
             DBObject mongoUser = collection.findOne(new BasicDBObject().append("username", username));
             if (mongoUser != null) {
@@ -246,7 +246,7 @@ public class User extends ModelBase {
             } else {
                 return null;
             }
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
             return User.find.where().ieq("username", username).findUnique();
         } else {
             throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
@@ -262,7 +262,7 @@ public class User extends ModelBase {
      */
     public static User findUserById(String id) {
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
             DBCollection collection = MongoHelper.getDBCollection(USER_COLLECTION);
             DBObject mongoUser = collection.findOne(new BasicDBObject().append("_id", new ObjectId(id)));
             if (mongoUser != null) {
@@ -270,7 +270,7 @@ public class User extends ModelBase {
             } else {
                 return null;
             }
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
             return User.find.byId(Long.parseLong(id));
         } else {
             throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
@@ -287,19 +287,18 @@ public class User extends ModelBase {
 
         User createdUser;
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
            BasicDBObject dbObject = createDBObjectFromUser(user);
            DBObject createdDBObject = (DBObject) create(dbObject, USER_COLLECTION);
            createdUser = populateUser(createdDBObject);
            return createdUser;
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
            createdUser = (User) create(user, null);
            return createdUser;
         } else {
             throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
                     "for the db.default.type setting.");
         }
-
     }
 
     /**
@@ -308,16 +307,15 @@ public class User extends ModelBase {
      */
     public static void updateUser(User user) {
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
             BasicDBObject dbObject = createDBObjectFromUser(user);
             updateObject(dbObject, USER_COLLECTION);
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
             updateObject(user, null);
         } else {
             throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
                     "for the db.default.type setting.");
         }
-
     }
 
     /**
@@ -326,10 +324,10 @@ public class User extends ModelBase {
      */
     public static void deleteUser(User user) {
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
             BasicDBObject dbObject = createDBObjectFromUser(user);
             delete(dbObject, USER_COLLECTION);
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
             delete(user, null);
         } else {
             throw new RuntimeException("Can't find the database type.  Check the application.conf file " +

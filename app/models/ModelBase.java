@@ -20,10 +20,10 @@ import java.util.Date;
  * Date: 11/18/13
  */
 @MappedSuperclass
-public class ModelBase extends Model{
+public class ModelBase extends Model {
 
     // pulls data from application.conf and sets local variables
-    private static final String DBTYPE = Play.application().configuration().getString("jumpstart.dbtype");
+    private static final String DB_TYPE = Play.application().configuration().getString("jumpstart.dbtype");
     private static final String MONGO = "mongo";
     private static final String MYSQL = "mysql";
 
@@ -44,7 +44,7 @@ public class ModelBase extends Model{
      */
     public static Object create(Object object, String collectionName) {
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
 
             DBObject dbObject = (DBObject) object;
 
@@ -53,7 +53,7 @@ public class ModelBase extends Model{
 
             return dbObject;
 
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
 
             ((ModelBase) object).save();
             return object;
@@ -72,7 +72,7 @@ public class ModelBase extends Model{
      */
     public static Object updateObject(Object object, String collectionName) {
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
 
             DBObject updatedObject = (DBObject) object;
 
@@ -85,7 +85,7 @@ public class ModelBase extends Model{
 
             return updatedObject;
 
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
 
             ((ModelBase) object).update();
             return object;
@@ -104,7 +104,7 @@ public class ModelBase extends Model{
      */
     public static void delete(Object object, String collectionName) {
 
-        if (DBTYPE.equals(MONGO)) {
+        if (DB_TYPE.equals(MONGO)) {
 
             // map object onto dbobject so we can get _id off the dbobject
             DBObject dbObject = (DBObject) object;
@@ -117,7 +117,7 @@ public class ModelBase extends Model{
 
             collection.remove(userResult);
 
-        } else if (DBTYPE.equals(MYSQL)) {
+        } else if (DB_TYPE.equals(MYSQL)) {
 
             ((ModelBase) object).delete();
 
