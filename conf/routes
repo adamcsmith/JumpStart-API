@@ -11,14 +11,14 @@ GET           /register             controllers.Application.index()
 # API
 
 # USERS
-POST          /api/users            controllers.api.Users.create()
-GET           /api/users/:id        controllers.api.Users.get(id: String)
-PUT           /api/users/:id        controllers.api.Users.update(id: String)
-DELETE        /api/users/:id        controllers.api.Users.delete(id: String)
+POST          /api/users            controllers.api.UserController.create()
+GET           /api/users/:id        controllers.api.UserController.get(id: String)
+PUT           /api/users/:id        controllers.api.UserController.update(id: String)
+DELETE        /api/users/:id        controllers.api.UserController.delete(id: String)
 
 # SESSIONS
-POST          /api/sessions         controllers.api.Sessions.create()
-DELETE        /api/sessions         controllers.api.Sessions.delete()
+POST          /api/sessions         controllers.api.SessionsController.create()
+DELETE        /api/sessions         controllers.api.SessionsController.delete()
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file         controllers.Assets.at(path="/public", file)

@@ -17,7 +17,7 @@ import java.util.Map;
  * User: adamcsmith
  * Date: 11/12/13
  */
-public class Sessions extends ApiBaseController {
+public class SessionsController extends ApiBaseController {
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result create(){

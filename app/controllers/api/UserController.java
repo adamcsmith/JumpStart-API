@@ -15,7 +15,7 @@ import java.util.Date;
  * User: adamcsmith
  * Date: 10/31/13
  */
-public class Users extends ApiBaseController {
+public class UserController extends ApiBaseController {
 
     /**
      * Create user

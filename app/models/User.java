@@ -35,7 +35,8 @@ public class User extends ModelBase {
     private static final String MONGO = "mongo";
     private static final String MYSQL = "mysql";
 
-    private static final String USER_COLLECTION = Play.application().configuration().getString("mongo.userCollectionName");
+    private static final DBCollection USER_COLLECTION =
+        MongoHelper.getDBCollection(Play.application().configuration().getString("mongo.userCollectionName"));
 
     /***********************************************************************
      * Enums and Static fields                                             *
@@ -210,6 +211,7 @@ public class User extends ModelBase {
      ***********************************************************************/
 
     public List<ValidationError> validate(){
+
         List<ValidationError> errors = new ArrayList<ValidationError>();
         if(StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(confirmPassword) && !password.equals(confirmPassword)){
             errors.add(new ValidationError("password", "error.passwordAndConfirmPasswordNoMatch"));
@@ -239,8 +241,7 @@ public class User extends ModelBase {
     public static User findUserByUsername(String username) {
 
         if (DB_TYPE.equals(MONGO)) {
-            DBCollection collection = MongoHelper.getDBCollection(USER_COLLECTION);
-            DBObject mongoUser = collection.findOne(new BasicDBObject().append("username", username));
+            DBObject mongoUser = USER_COLLECTION.findOne(new BasicDBObject("username", username));
             if (mongoUser != null) {
                return populateUser(mongoUser);
             } else {
@@ -263,8 +264,7 @@ public class User extends ModelBase {
     public static User findUserById(String id) {
 
         if (DB_TYPE.equals(MONGO)) {
-            DBCollection collection = MongoHelper.getDBCollection(USER_COLLECTION);
-            DBObject mongoUser = collection.findOne(new BasicDBObject().append("_id", new ObjectId(id)));
+            DBObject mongoUser = USER_COLLECTION.findOne(new BasicDBObject("_id", new ObjectId(id)));
             if (mongoUser != null) {
                 return populateUser(mongoUser);
             } else {
@@ -305,13 +305,19 @@ public class User extends ModelBase {
      *
      * @param user
      */
-    public static void updateUser(User user) {
+    public static User updateUser(User user) {
+
+        User updatedUser;
 
         if (DB_TYPE.equals(MONGO)) {
             BasicDBObject dbObject = createDBObjectFromUser(user);
-            updateObject(dbObject, USER_COLLECTION);
+            DBObject updatedObject = (DBObject) updateObject(dbObject, USER_COLLECTION);
+            updatedUser = populateUser(updatedObject);
+            updatedUser.updated = new Date();
+            return updatedUser;
         } else if (DB_TYPE.equals(MYSQL)) {
-            updateObject(user, null);
+            updatedUser = (User) updateObject(user, null);
+            return updatedUser;
         } else {
             throw new RuntimeException("Can't find the database type.  Check the application.conf file " +
                     "for the db.default.type setting.");
@@ -358,12 +364,12 @@ public class User extends ModelBase {
 //        user.temporaryPasswordExpiration = (Date) dbObject.get("temporaryPasswordExpiration");
 //        user.lastLogin = (Date) dbObject.get("lastLogin");
 //        user.failedLoginAttempts = (Integer) dbObject.get("failedLoginAttempts");
+//        user.roles = (ArrayList) dbObject.get("roles");
         user.created = (Date) dbObject.get("created");
         user.updated = (Date) dbObject.get("updated");
 
         return user;
     }
-
     /**
      * Builds a database object based on the fields the passed in User has
      *
@@ -379,8 +385,10 @@ public class User extends ModelBase {
         dbObject.append("password", user.password);
         dbObject.append("temporaryPassword", user.temporaryPassword);
         dbObject.append("temporaryPasswordExpiration", user.temporaryPasswordExpiration);
+        dbObject.append("salt", user.salt);
         dbObject.append("lastLogin", user.lastLogin);
         dbObject.append("failedLoginAttempts", user.failedLoginAttempts);
+        dbObject.append("roles", user.roles);
         dbObject.append("created", user.created);
         dbObject.append("updated", user.updated);
 

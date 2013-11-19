@@ -3,7 +3,6 @@ package models;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import helpers.MongoHelper;
 import org.bson.types.ObjectId;
 import play.Play;
 import play.db.ebean.Model;
@@ -37,20 +36,18 @@ public class ModelBase extends Model {
     public Date updated;
 
     /**
+     * Adds new object to db
      *
      * @param object
-     * @param collectionName
-     * @return
+     * @param collection
+     * @return - created object
      */
-    public static Object create(Object object, String collectionName) {
+    public static Object create(Object object, DBCollection collection) {
 
         if (DB_TYPE.equals(MONGO)) {
 
             DBObject dbObject = (DBObject) object;
-
-            DBCollection collection = MongoHelper.getDBCollection(collectionName);
             collection.save(dbObject);
-
             return dbObject;
 
         } else if (DB_TYPE.equals(MYSQL)) {
@@ -65,21 +62,21 @@ public class ModelBase extends Model {
     }
 
     /**
+     * Update existing object in db
      *
      * @param object
-     * @param collectionName
-     * @return
+     * @param collection
+     * @return - updated object
      */
-    public static Object updateObject(Object object, String collectionName) {
+    public static Object updateObject(Object object, DBCollection collection) {
 
         if (DB_TYPE.equals(MONGO)) {
 
             DBObject updatedObject = (DBObject) object;
 
-            DBCollection collection = MongoHelper.getDBCollection(collectionName);
-
             // Lookup existing object
-            DBObject existingObject = collection.findOne(new BasicDBObject().append("_id", new ObjectId(updatedObject.get("_id").toString())));
+            String objectId = updatedObject.get("_id").toString();
+            DBObject existingObject = collection.findOne(new BasicDBObject("_id", new ObjectId(objectId)));
 
             collection.update(existingObject, updatedObject);
 
@@ -96,24 +93,19 @@ public class ModelBase extends Model {
         }
     }
 
-
     /**
+     * Remove existing object from db
      *
      * @param object
-     * @param collectionName
+     * @param collection
      */
-    public static void delete(Object object, String collectionName) {
+    public static void delete(Object object, DBCollection collection) {
 
         if (DB_TYPE.equals(MONGO)) {
 
-            // map object onto dbobject so we can get _id off the dbobject
-            DBObject dbObject = (DBObject) object;
-
-            // create collection to search from
-            DBCollection collection = MongoHelper.getDBCollection(collectionName);
-
             // Lookup object
-            DBObject userResult = collection.findOne(new BasicDBObject().append("_id", new ObjectId(dbObject.get("_id").toString())));
+            String objectId = ((DBObject) object).get("_id").toString();
+            DBObject userResult = collection.findOne(new BasicDBObject("_id", new ObjectId(objectId)));
 
             collection.remove(userResult);
 
