@@ -1,7 +1,6 @@
 package models;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import helpers.MongoHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +34,7 @@ public class User extends ModelBase {
     private static final String MONGO = "mongo";
     private static final String MYSQL = "mysql";
 
-    private static final DBCollection USER_COLLECTION =
-        MongoHelper.getDBCollection(Play.application().configuration().getString("mongo.userCollectionName"));
+    private static final String MONGO_USER_COLL = Play.application().configuration().getString("mongo.userCollectionName");
 
     /***********************************************************************
      * Enums and Static fields                                             *
@@ -241,7 +239,7 @@ public class User extends ModelBase {
     public static User findUserByUsername(String username) {
 
         if (DB_TYPE.equals(MONGO)) {
-            DBObject mongoUser = USER_COLLECTION.findOne(new BasicDBObject("username", username));
+            DBObject mongoUser = MongoHelper.getDBCollection(MONGO_USER_COLL).findOne(new BasicDBObject("username", username));
             if (mongoUser != null) {
                return populateUser(mongoUser);
             } else {
@@ -264,7 +262,7 @@ public class User extends ModelBase {
     public static User findUserById(String id) {
 
         if (DB_TYPE.equals(MONGO)) {
-            DBObject mongoUser = USER_COLLECTION.findOne(new BasicDBObject("_id", new ObjectId(id)));
+            DBObject mongoUser = MongoHelper.getDBCollection(MONGO_USER_COLL).findOne(new BasicDBObject("_id", new ObjectId(id)));
             if (mongoUser != null) {
                 return populateUser(mongoUser);
             } else {
@@ -289,7 +287,7 @@ public class User extends ModelBase {
 
         if (DB_TYPE.equals(MONGO)) {
            BasicDBObject dbObject = createDBObjectFromUser(user);
-           DBObject createdDBObject = (DBObject) create(dbObject, USER_COLLECTION);
+           DBObject createdDBObject = (DBObject) create(dbObject, MongoHelper.getDBCollection(MONGO_USER_COLL));
            createdUser = populateUser(createdDBObject);
            return createdUser;
         } else if (DB_TYPE.equals(MYSQL)) {
@@ -311,7 +309,7 @@ public class User extends ModelBase {
 
         if (DB_TYPE.equals(MONGO)) {
             BasicDBObject dbObject = createDBObjectFromUser(user);
-            DBObject updatedObject = (DBObject) updateObject(dbObject, USER_COLLECTION);
+            DBObject updatedObject = (DBObject) updateObject(dbObject, MongoHelper.getDBCollection(MONGO_USER_COLL));
             updatedUser = populateUser(updatedObject);
             updatedUser.updated = new Date();
             return updatedUser;
@@ -332,7 +330,7 @@ public class User extends ModelBase {
 
         if (DB_TYPE.equals(MONGO)) {
             BasicDBObject dbObject = createDBObjectFromUser(user);
-            delete(dbObject, USER_COLLECTION);
+            delete(dbObject, MongoHelper.getDBCollection(MONGO_USER_COLL));
         } else if (DB_TYPE.equals(MYSQL)) {
             delete(user, null);
         } else {
@@ -380,7 +378,9 @@ public class User extends ModelBase {
 
         BasicDBObject dbObject = new BasicDBObject();
 
-        dbObject.append("_id", new ObjectId(user.id));
+        if (user.id != null) {
+            dbObject.append("_id", new ObjectId(user.id));
+        }
         dbObject.append("username", user.username);
         dbObject.append("password", user.password);
         dbObject.append("temporaryPassword", user.temporaryPassword);
