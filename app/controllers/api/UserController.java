@@ -6,7 +6,9 @@ import models.User;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
+import service.user.UserService;
 import utils.SecurityUtil;
+import utils.ServiceUtil;
 
 import java.util.Date;
 
@@ -16,6 +18,8 @@ import java.util.Date;
  * Date: 10/31/13
  */
 public class UserController extends ApiBaseController {
+
+    private static UserService userService = ServiceUtil.getDBUserService();
 
     /**
      * Create user
@@ -33,13 +37,13 @@ public class UserController extends ApiBaseController {
         user.created = new Date();
 
         // check to make sure username doesn't already exist
-        User userCheck = User.findUserByUsername(user.username);
+        User userCheck = userService.findUserByUsername(user.username);
         if (userCheck != null) {
             return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
         }
 
         // create the user
-        User createdUser = User.createUser(user);
+        User createdUser = userService.createUser(user);
 
         // create session
         SecurityUtil.createAuthenticatedSession(createdUser);
@@ -55,7 +59,7 @@ public class UserController extends ApiBaseController {
      */
     public static Result get(String id){
 
-        User user = User.findUserById(id);
+        User user = userService.findUserById(id);
         if (user == null) {
             return ApiBaseController.notFound("User with id " + id + " not found");
         }
@@ -75,7 +79,7 @@ public class UserController extends ApiBaseController {
     public static Result update(String id) {
 
         // find the user to be updated
-        User existingUser = User.findUserById(id);
+        User existingUser = userService.findUserById(id);
         if (existingUser == null) {
             return ApiBaseController.notFound("User with id " + id + " not found");
         }
@@ -93,14 +97,14 @@ public class UserController extends ApiBaseController {
         // check for username change
         if (!updatedUser.username.equals(existingUser.username)) {
             // check to make sure username doesn't already exist
-            User userCheck = User.findUserByUsername(updatedUser.username);
+            User userCheck = userService.findUserByUsername(updatedUser.username);
             if (userCheck != null) {
                 return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
             }
         }
 
         // update the user
-        User.updateUser(updatedUser);
+        userService.updateUser(updatedUser);
 
         return successfulSaveResult(updatedUser.id);
     }
@@ -113,13 +117,12 @@ public class UserController extends ApiBaseController {
      */
     public static Result delete(String id) {
 
-        User user = User.findUserById(id);
+        User user = userService.findUserById(id);
         if (user == null) {
             return ApiBaseController.notFound("User with id " + id + " not found.  Delete failed.");
         } else {
-            User.deleteUser(user);
+            userService.deleteUser(user);
             return ApiBaseController.ok("Woohoo! User " + user.username + " successfully deleted");
         }
     }
-
 }
