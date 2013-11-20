@@ -4,31 +4,27 @@
 # --- !Ups
 
 create table APP_USER (
-  id                        bigint not null,
-  created                   timestamp,
-  updated                   timestamp,
+  id                        varchar(255) not null,
+  created                   datetime,
+  updated                   datetime,
   username                  varchar(255),
   password                  varchar(255),
   temporary_password        varchar(255),
-  temporary_password_expiration timestamp,
+  temporary_password_expiration datetime,
   salt                      varchar(255),
-  last_login                timestamp,
+  last_login                datetime,
   failed_login_attempts     integer,
   constraint pk_APP_USER primary key (id))
 ;
-
-create sequence APP_USER_seq;
 
 
 
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+SET FOREIGN_KEY_CHECKS=0;
 
 drop table if exists APP_USER;
 
-SET REFERENTIAL_INTEGRITY TRUE;
-
-drop sequence if exists APP_USER_seq;
+SET FOREIGN_KEY_CHECKS=1;
 
