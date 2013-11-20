@@ -50,6 +50,7 @@ public class MongoUserService extends MongoBaseService implements UserService {
 
         BasicDBObject dbObject = createDBObjectFromUser(user);
         DBObject createdDBObject = (DBObject) super.create(dbObject, MongoUtil.getDBCollection(MONGO_USER_COLL));
+
         return populateUser(createdDBObject);
     }
 

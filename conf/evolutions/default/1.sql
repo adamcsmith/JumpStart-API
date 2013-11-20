@@ -24,7 +24,7 @@ create table APP_USER (
 
 SET FOREIGN_KEY_CHECKS=0;
 
-drop table if exists APP_USER;
+drop table APP_USER;
 
 SET FOREIGN_KEY_CHECKS=1;
 
