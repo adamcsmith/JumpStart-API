@@ -27,7 +27,7 @@ public class UserController extends ApiBaseController {
      * @return - creation result
      */
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result create(){
+    public static Result create() {
 
         JsonNode json = request().body().asJson();
 
@@ -57,7 +57,7 @@ public class UserController extends ApiBaseController {
      * @param id - user id
      * @return - retrieve result
      */
-    public static Result get(String id){
+    public static Result get(String id) {
 
         User user = userService.findUserById(id);
         if (user == null) {

@@ -19,12 +19,10 @@ public class MongoUserService extends MongoBaseService implements UserService {
 
     private static final String MONGO_USER_COLL = Play.application().configuration().getString("mongo.userCollectionName");
 
-    /**
-     * Queries mongo db to find user by user name
-     *
-     * @param username
-     * @return - found user or null
-     */
+    /***********************************************************************
+     * User CRUD methods - Mongo syntax                                    *
+     ***********************************************************************/
+
     @Override
     public User findUserByUsername(String username) {
 
@@ -36,12 +34,6 @@ public class MongoUserService extends MongoBaseService implements UserService {
         }
     }
 
-    /**
-     * attempts to find user by unique mongo _id
-     *
-     * @param id
-     * @return - found user or null
-     */
     @Override
     public User findUserById(String id) {
 
@@ -53,43 +45,25 @@ public class MongoUserService extends MongoBaseService implements UserService {
         }
     }
 
-    /**
-     *
-     * @param user
-     * @return
-     */
     @Override
     public User createUser(User user) {
 
-        User createdUser;
         BasicDBObject dbObject = createDBObjectFromUser(user);
         DBObject createdDBObject = (DBObject) super.create(dbObject, MongoUtil.getDBCollection(MONGO_USER_COLL));
-        createdUser = populateUser(createdDBObject);
-        return createdUser;
+        return populateUser(createdDBObject);
     }
 
-    /**
-     *
-     * @param user
-     * @return
-     */
     @Override
     public User updateUser(User user) {
 
-        User updatedUser;
-
         BasicDBObject dbObject = createDBObjectFromUser(user);
         DBObject updatedObject = (DBObject) super.updateObject(dbObject, MongoUtil.getDBCollection(MONGO_USER_COLL));
-        updatedUser = populateUser(updatedObject);
+        User updatedUser = populateUser(updatedObject);
         updatedUser.updated = new Date();
 
         return updatedUser;
     }
 
-    /**
-     *
-     * @param user
-     */
     @Override
     public void deleteUser(User user) {
 
