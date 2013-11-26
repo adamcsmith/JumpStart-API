@@ -11,6 +11,7 @@ import utils.SecurityUtil;
 import utils.ServiceUtil;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
@@ -125,4 +126,16 @@ public class UserController extends ApiBaseController {
             return ApiBaseController.ok("Woohoo! User " + user.username + " successfully deleted");
         }
     }
+
+    /**
+     * Returns a list of all users in db
+     *
+     * @return
+     */
+    public static Result findAllUsers() {
+
+        List<User> userList = userService.findAllUsers();
+        return ok(Json.toJson(userList));
+    }
+
 }

@@ -15,6 +15,7 @@ POST          /api/users            controllers.api.UserController.create()
 GET           /api/users/:id        controllers.api.UserController.get(id: String)
 PUT           /api/users/:id        controllers.api.UserController.update(id: String)
 DELETE        /api/users/:id        controllers.api.UserController.delete(id: String)
+GET           /api/users            controllers.api.UserController.findAllUsers()
 
 # SESSIONS
 POST          /api/sessions         controllers.api.SessionsController.create()
