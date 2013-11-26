@@ -2,8 +2,8 @@ import models.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import service.user.MySqlUserService;
 import service.user.UserService;
+import utils.ServiceUtil;
 
 import java.util.Date;
 
@@ -18,11 +18,9 @@ import static play.test.Helpers.running;
  */
 public class UserServiceTest {
 
-    private static UserService userService = new MySqlUserService();
-//    private static UserService userService = new MongoUserService();
-
     @Before
     public void setUp() throws Exception {
+
         deleteAllUsers();
     }
 
@@ -38,6 +36,8 @@ public class UserServiceTest {
         running(fakeApplication(), new Runnable() {
             @Override
             public void run() {
+
+                UserService userService = ServiceUtil.getDBUserService();
                 for ( User user : userService.findAllUsers()) {
                     userService.deleteUser(user);
                 }
@@ -51,6 +51,8 @@ public class UserServiceTest {
         running(fakeApplication(), new Runnable() {
             @Override
             public void run() {
+
+                UserService userService = ServiceUtil.getDBUserService();
 
                 User user = new User();
                 user.username = "test.test@gmail.com";
