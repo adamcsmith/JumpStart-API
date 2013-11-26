@@ -3,6 +3,8 @@ package service.user;
 import models.User;
 import service.MySqlBaseService;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: adamcsmith
@@ -43,5 +45,11 @@ public class MySqlUserService extends MySqlBaseService implements UserService {
     public void deleteUser(User user) {
 
         super.delete(user, null);
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+
+        return User.find.all();
     }
 }

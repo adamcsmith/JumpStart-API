@@ -2,6 +2,8 @@ package service.user;
 
 import models.User;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: adamcsmith
@@ -18,5 +20,7 @@ public interface UserService {
     public abstract User updateUser(User user);
 
     public abstract void deleteUser(User user);
+
+    public abstract List<User> findAllUsers();
 }
 

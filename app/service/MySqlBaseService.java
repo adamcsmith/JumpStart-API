@@ -46,4 +46,5 @@ public abstract class MySqlBaseService {
 
         ((ModelBase) object).delete();
     }
+
 }
