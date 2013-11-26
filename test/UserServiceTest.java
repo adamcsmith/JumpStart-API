@@ -19,6 +19,7 @@ import static play.test.Helpers.running;
 public class UserServiceTest {
 
     private static UserService userService = new MySqlUserService();
+//    private static UserService userService = new MongoUserService();
 
     @Before
     public void setUp() throws Exception {
