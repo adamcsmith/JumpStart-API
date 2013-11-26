@@ -33,6 +33,8 @@ public class UserServiceTest {
 
     private void deleteAllUsers() {
 
+        // TODO: add check to make sure using test database
+
         running(fakeApplication(), new Runnable() {
             @Override
             public void run() {
@@ -67,11 +69,11 @@ public class UserServiceTest {
 
                 readUser.username = "test.osterone@aol.com";
                 readUser.updated = new Date();
-                readUser = userService.updateUser(readUser);  // test update
+                User updatedUser = userService.updateUser(readUser);  // test update
 
-                assertThat(readUser.created != null);
-                assertThat(readUser.updated != null);
-                assertThat(readUser.created.before(readUser.updated));
+                assertThat(updatedUser.username = "test.osterone@aol.com");
+                assertThat(updatedUser.updated != null);
+                assertThat(updatedUser.created.before(readUser.updated));
             }
 
         });
