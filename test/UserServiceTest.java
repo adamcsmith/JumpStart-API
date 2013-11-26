@@ -44,7 +44,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testSavingUser() throws Exception {
+    public void testUserCRUD() throws Exception {
 
         running(fakeApplication(), new Runnable() {
             @Override
@@ -55,9 +55,9 @@ public class UserServiceTest {
                 user.password = "password";
                 user.failedLoginAttempts = 0;
                 user.created = new Date();
-                user = userService.createUser(user);
+                user = userService.createUser(user);   // test create
 
-                User readUser = userService.findUserById(user.id);
+                User readUser = userService.findUserById(user.id);  // test get
                 assertThat(readUser != null);
                 assertThat(readUser.id != null);
                 assertThat(readUser.failedLoginAttempts == 0);
@@ -67,7 +67,7 @@ public class UserServiceTest {
 
                 readUser.username = "test.osterone@aol.com";
                 readUser.updated = new Date();
-                readUser = userService.updateUser(readUser);
+                readUser = userService.updateUser(readUser);  // test update
 
                 assertThat(readUser.created != null);
                 assertThat(readUser.updated != null);
