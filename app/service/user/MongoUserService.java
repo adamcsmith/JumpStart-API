@@ -8,7 +8,9 @@ import play.Play;
 import service.MongoBaseService;
 import utils.MongoUtil;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -70,6 +72,19 @@ public class MongoUserService extends MongoBaseService implements UserService {
 
         BasicDBObject dbObject = createDBObjectFromUser(user);
         super.delete(dbObject, MongoUtil.getDBCollection(MONGO_USER_COLL));
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+
+        List<User> userList = new ArrayList<User>();
+        List<DBObject> testList = super.findAll(MongoUtil.getDBCollection(MONGO_USER_COLL));
+        for (DBObject dbObject : testList) {
+            User user = populateUser(dbObject);
+            userList.add(user);
+        }
+
+        return userList;
     }
 
 

@@ -2,8 +2,12 @@ package service;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -60,4 +64,23 @@ public abstract class MongoBaseService {
 
         collection.remove(userResult);
     }
+
+    /**
+     * Finds all objects in the given collection
+     *
+     * @param collection
+     * @return
+     */
+    public List<DBObject> findAll(DBCollection collection) {
+
+        List<DBObject> results = new ArrayList<DBObject>();
+        DBCursor cursor = collection.find();
+        while (cursor.hasNext()) {
+            DBObject test = cursor.next();
+            results.add(test);
+        }
+
+        return results;
+    }
+
 }

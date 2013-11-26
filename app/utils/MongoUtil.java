@@ -47,4 +47,5 @@ public class MongoUtil {
 
         return getDB().getCollection(collectionName);
     }
+
 }
