@@ -56,8 +56,10 @@ public class UserController extends ApiBaseController {
      * Find a user from an id
      *
      * @param id - user id
+     * @param username - username
      * @return - retrieve result
      */
+    @BodyParser.Of(BodyParser.Json.class)
     public static Result get(String id, String username) {
 
         User user = userService.findUser(id, username);
