@@ -18,18 +18,6 @@ public class MySqlUserService extends MySqlBaseService implements UserService {
      * User CRUD methods - MySql syntax                                    *
      ***********************************************************************/
 
-//    @Override
-//    public User findUserByUsername(String username) {
-//
-//        return User.find.where().ieq("username", username).findUnique();
-//    }
-//
-//    @Override
-//    public User findUserById(String id) {
-//
-//        return User.find.byId(Long.parseLong(id));
-//    }
-
     @Override
     public User findUser(String id, String username) {
 
