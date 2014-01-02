@@ -11,9 +11,7 @@ import java.util.List;
  */
 public interface UserService {
 
-    public abstract User findUserByUsername(String username);
-
-    public abstract User findUserById(String id);
+    public abstract User findUser(String id, String username);
 
     public abstract User createUser(User user);
 

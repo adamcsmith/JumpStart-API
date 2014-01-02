@@ -117,7 +117,7 @@ public class User extends ModelBase {
             throw new RuntimeException("error.usernameAndPasswordRequired");
         }
 
-        User user = ServiceUtil.getDBUserService().findUserByUsername(username);
+        User user = ServiceUtil.getDBUserService().findUser(null, username);
 
         //no user found
         if(user == null){

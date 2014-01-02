@@ -1,8 +1,10 @@
 package service.user;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import models.User;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import play.Play;
 import service.MongoBaseService;
@@ -25,26 +27,43 @@ public class MongoUserService extends MongoBaseService implements UserService {
      * User CRUD methods - Mongo syntax                                    *
      ***********************************************************************/
 
-    @Override
-    public User findUserByUsername(String username) {
+    public User findUser(String id, String username) {
 
-        DBObject mongoUser = MongoUtil.getDBCollection(MONGO_USER_COLL).findOne(new BasicDBObject("username", username));
-        if (mongoUser != null) {
-            return populateUser(mongoUser);
+        BasicDBObject dbObject;
+        DBObject result;
+
+        if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(username)) {
+
+            dbObject = new BasicDBObject();
+            dbObject.append("_id", new ObjectId(id));
+            dbObject.append("username", username);
+
+        } else {
+
+            BasicDBList or = new BasicDBList();
+
+            DBObject clauseId;
+            if (StringUtils.isNotBlank(id)){
+                clauseId = new BasicDBObject("_id", new ObjectId(id));
+                or.add(clauseId);
+            }
+
+            DBObject clauseUserName;
+            if (StringUtils.isNotBlank(username)){
+                clauseUserName = new BasicDBObject("username", username);
+                or.add(clauseUserName);
+            }
+
+            dbObject = new BasicDBObject("$or", or);
+        }
+
+        result = MongoUtil.getDBCollection(MONGO_USER_COLL).findOne(dbObject);
+        if (result != null) {
+            return populateUser(result);
         } else {
             return null;
         }
-    }
 
-    @Override
-    public User findUserById(String id) {
-
-        DBObject mongoUser = MongoUtil.getDBCollection(MONGO_USER_COLL).findOne(new BasicDBObject("_id", new ObjectId(id)));
-        if (mongoUser != null) {
-            return populateUser(mongoUser);
-        } else {
-            return null;
-        }
     }
 
     @Override

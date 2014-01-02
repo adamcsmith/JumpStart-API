@@ -1,6 +1,7 @@
 package service.user;
 
 import models.User;
+import org.apache.commons.lang3.StringUtils;
 import service.MySqlBaseService;
 
 import java.util.List;
@@ -17,17 +18,43 @@ public class MySqlUserService extends MySqlBaseService implements UserService {
      * User CRUD methods - MySql syntax                                    *
      ***********************************************************************/
 
-    @Override
-    public User findUserByUsername(String username) {
+//    @Override
+//    public User findUserByUsername(String username) {
+//
+//        return User.find.where().ieq("username", username).findUnique();
+//    }
+//
+//    @Override
+//    public User findUserById(String id) {
+//
+//        return User.find.byId(Long.parseLong(id));
+//    }
 
-        return User.find.where().ieq("username", username).findUnique();
+    @Override
+    public User findUser(String id, String username) {
+
+        User user = null;
+
+        if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(username)) {
+
+            // Figure out how to query multiple fields in mysql
+            user =  User.find.where().ieq("username", username).ieq("id", id).findUnique();
+
+        } else {
+
+            if (StringUtils.isNotBlank(id)){
+                user =  User.find.byId(Long.parseLong(id));
+            }
+
+            if (StringUtils.isNotBlank(username)){
+                user =  User.find.where().ieq("username", username).findUnique();
+            }
+
+        }
+
+        return user;
     }
 
-    @Override
-    public User findUserById(String id) {
-
-        return User.find.byId(Long.parseLong(id));
-    }
 
     @Override
     public User createUser(User user) {

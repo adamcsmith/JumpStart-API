@@ -25,7 +25,7 @@ public class SecurityUtil {
         Http.Session session = Http.Context.current().session();
         String userId = session != null ? session.get(SESSION_USER_IDENTIFIER) : null;
         if(userId != null){
-            return ServiceUtil.getDBUserService().findUserById(userId);
+            return ServiceUtil.getDBUserService().findUser(userId, null);
         }
 
         return null;

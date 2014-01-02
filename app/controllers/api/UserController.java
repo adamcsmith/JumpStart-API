@@ -38,7 +38,7 @@ public class UserController extends ApiBaseController {
         user.created = new Date();
 
         // check to make sure username doesn't already exist
-        User userCheck = userService.findUserByUsername(user.username);
+        User userCheck = userService.findUser(null, user.username);
         if (userCheck != null) {
             return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
         }
@@ -58,9 +58,9 @@ public class UserController extends ApiBaseController {
      * @param id - user id
      * @return - retrieve result
      */
-    public static Result get(String id) {
+    public static Result get(String id, String username) {
 
-        User user = userService.findUserById(id);
+        User user = userService.findUser(id, username);
         if (user == null) {
             return ApiBaseController.notFound("User with id " + id + " not found");
         }
@@ -80,7 +80,7 @@ public class UserController extends ApiBaseController {
     public static Result update(String id) {
 
         // find the user to be updated
-        User existingUser = userService.findUserById(id);
+        User existingUser = userService.findUser(id, null);
         if (existingUser == null) {
             return ApiBaseController.notFound("User with id " + id + " not found");
         }
@@ -98,7 +98,7 @@ public class UserController extends ApiBaseController {
         // check for username change
         if (!updatedUser.username.equals(existingUser.username)) {
             // check to make sure username doesn't already exist
-            User userCheck = userService.findUserByUsername(updatedUser.username);
+            User userCheck = userService.findUser(null, updatedUser.username);
             if (userCheck != null) {
                 return ApiBaseController.badRequest("Bummer.  A user with that username already exists.");
             }
@@ -118,7 +118,7 @@ public class UserController extends ApiBaseController {
      */
     public static Result delete(String id) {
 
-        User user = userService.findUserById(id);
+        User user = userService.findUser(id, null);
         if (user == null) {
             return ApiBaseController.notFound("User with id " + id + " not found.  Delete failed.");
         } else {
