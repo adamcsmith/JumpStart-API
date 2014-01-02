@@ -5,7 +5,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import play.libs.Crypto;
 import utils.ServiceUtil;
 
 import javax.persistence.*;
@@ -182,13 +181,17 @@ public class User extends ModelBase {
     }
 
     /**
-     * Hash a password using the OpenBSD bcrypt scheme.  This can be used to check if a plain-text password matches the
-     * encrypted and stored password value for this user.
-     * @param password The plain-text password to be hashed
+     * Encrypt a value as a password. The BCrypt library implements OpenBSD-style Blowfish password hashing using the
+     * scheme described in "A Future-Adaptable Password Scheme" by Niels Provos and David Mazieres. This password
+     * hashing system tries to thwart off-line password cracking using a computationally-intensive hashing algorithm,
+     * based on Bruce Schneier's Blowfish cipher. The work factor of the algorithm is parameterised, so it can be
+     * increased as computers get faster.
+     * See http://www.mindrot.org/files/jBCrypt/jBCrypt-0.2-doc/BCrypt.html for more details
+     * @param value The plain-text password to be hashed
      * @return a String that is the hashed value of the password.
      */
-    private String hashPassword(String password) {
-        return Crypto.encryptAES(BCrypt.hashpw(password, salt));
+    private String hashPassword(String value) {
+        return value != null ? BCrypt.hashpw(value, BCrypt.gensalt()) : null;
     }
 
 
